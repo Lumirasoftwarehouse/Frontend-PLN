@@ -11,7 +11,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      component: () => import('../views/bbLogin.vue'),
       alias: '/login',
       meta: {
         bodyClass: 'custom-body-style', 
@@ -30,6 +30,11 @@ const router = createRouter({
       component: () => import('../views/admin/ProjectView.vue')
     },
     {
+      path: '/admin-create-project',
+      name: 'admin-create-project',
+      component: () => import('../views/admin/CreateProject.vue')
+    },
+    {
       path: '/admin-monitoring',
       name: 'admin-monitoring',
       component: () => import('../views/admin/MonitoringView.vue')
@@ -38,6 +43,12 @@ const router = createRouter({
       path: '/admin-history',
       name: 'admin-history',
       component: () => import('../views/admin/HistoryView.vue')
+    },
+
+    {
+      path: '/admin-schedule',
+      name: 'admin-schedule',
+      component: () => import('../views/admin/Schedule.vue')
     },
 
 

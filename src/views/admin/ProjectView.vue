@@ -2,6 +2,7 @@
 import Sidebar from "../../components/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
+import CardProject from "../../components/admin/CardProject.vue";
 import { ref } from "vue";
 
 const sidebarToggled = ref(false);
@@ -25,75 +26,159 @@ const toggleSidebar = () => {
         <!-- Begin Page Content -->
         <div class="container-fluid mt-4">
           <!-- Page Heading -->
-          <div
-            class="d-sm-flex align-items-center justify-content-between mb-4"
-          >
-            <h1 class="h3 mb-0 text-gray-800 text-center">Projects</h1>
-          </div>
-
           <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <div class="row">
                 <div class="col-sm-4">
-                  <h6>All Projects</h6>
+                  <h6
+                    :class="{
+                      clickable: true,
+                      active: activeStatus === 'All Projects',
+                    }"
+                    @click="setActive('All Projects'), setFilter('all')"
+                  >
+                    All Projects
+                  </h6>
                 </div>
                 <div class="col-sm-4">
-                  <h6>In Progress</h6>
+                  <h6
+                    :class="{
+                      clickable: true,
+                      active: activeStatus === 'In Progress',
+                    }"
+                    @click="setActive('In Progress'), setFilter('0')"
+                  >
+                    In Progress
+                  </h6>
                 </div>
                 <div class="col-sm-4">
-                  <h6>Completed</h6>
+                  <h6
+                    :class="{
+                      clickable: true,
+                      active: activeStatus === 'Completed',
+                    }"
+                    @click="setActive('Completed'), setFilter('1')"
+                  >
+                    Completed
+                  </h6>
                 </div>
               </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
               <div class="row">
-                <div class="col-sm-4"></div>
                 <div class="col-sm-4">
-                  <button 
-                  class="btn btn-primary"
-                  data-toggle="modal"
-                        data-target="#createProject"
-                        >New Project</button>
+                  <button class="btn bg-black me-2" @click="setView('list')">
+                    <i class="bi bi-list text-white"></i>
+                  </button>
+                  <button
+                    class="btn"
+                    style="border: 1px solid black"
+                    @click="setView('block')"
+                  >
+                    <i class="bi bi-grid-fill text-black"></i>
+                  </button>
                 </div>
-                <div class="col-sm-4">
-                  <button class="btn btn-primary">New Project</button>
+                <div class="col-sm-6">
+                  <router-link
+                    class="btn btn-primary"
+                    to="/admin-create-project"
+                  >
+                    <i class="bi bi-plus"></i> New Project
+                  </router-link>
+                </div>
+                <div class="col-sm-2">
+                  <i class="bi bi-three-dots-vertical text-black fs-3"></i>
                 </div>
               </div>
             </div>
           </div>
           <!-- Content Row -->
-          <div class="table-responsive">
-            <div v-if="!ready" class="preloader"></div>
-            <DataTable class="display table table-striped" v-if="ready">
-              <thead>
-                <tr>
-                  <th scope="col">No</th>
-                  <th scope="col">Client</th>
-                  <th scope="col">Project</th>
-                  <th scope="col">Last Edited</th>
-                  <th scope="col">Due Date</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Schedule</th>
-                  <th scope="col">Export</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in projects" :key="item.id">
-                  <th scope="row">{{ index + 1 }}</th>
-                  <td>{{ item.client }}</td>
-                  <td>{{ item.project }}</td>
-                  <td>{{ item.updated_at }}</td>
-                  <td>{{ item.dueDate }}</td>
-                  <td>{{ item.status }}</td>
-                  <td>{{ item.schedule }}</td>
-                  <td>
-                    <button class="btn btn-primary">Export</button>
-                  </td>
-                </tr>
-              </tbody>
-            </DataTable>
+          <CardProject :projects="projects" v-if="view == 'block'" />
+          <div class="card mt-4" v-if="view == 'list'">
+            <div class="card-body">
+              <div v-if="!ready" class="preloader"></div>
+              <table class="table" v-if="ready">
+                <thead>
+                  <tr>
+                    <th scope="col">Client</th>
+                    <th scope="col">Project</th>
+                    <th scope="col">Last Edited</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Schedule</th>
+                    <th scope="col">Expert</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in projects" :key="item.id">
+                    <td
+                      v-if="
+                        statusProject == 'all' || item.status == statusProject
+                      "
+                    >
+                      {{ item.client }}
+                    </td>
+                    <td
+                      v-if="
+                        statusProject == 'all' || item.status == statusProject
+                      "
+                    >
+                      {{ item.project }}
+                    </td>
+                    <td
+                      v-if="
+                        statusProject == 'all' || item.status == statusProject
+                      "
+                    >
+                      {{ item.updated_at }}
+                    </td>
+                    <td
+                      v-if="
+                        statusProject == 'all' || item.status == statusProject
+                      "
+                    >
+                      {{ item.dueDate }}
+                    </td>
+                    <td
+                      v-if="
+                        statusProject == 'all' || item.status == statusProject
+                      "
+                    >
+                      <button
+                        class="btn btn-warning text-black"
+                        v-if="item.status == '0'"
+                      >
+                        In Progress
+                      </button>
+                      <button
+                        class="btn btn-success text-black"
+                        v-if="item.status == '1'"
+                      >
+                        Completed
+                      </button>
+                    </td>
+                    <td
+                      v-if="
+                        statusProject == 'all' || item.status == statusProject
+                      "
+                    >
+                      <router-link class="btn btn-primary" to="/admin-schedule">
+                        View
+                      </router-link>
+                    </td>
+                    <td
+                      v-if="
+                        statusProject == 'all' || item.status == statusProject
+                      "
+                    >
+                      <button class="btn btn-primary">test</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-
           <ChatMe />
         </div>
         <!-- /.container-fluid -->
@@ -105,84 +190,6 @@ const toggleSidebar = () => {
       <!-- End of Footer -->
     </div>
     <!-- End of Content Wrapper -->
-  </div>
-
-  <!-- modal create project -->
-  <div
-    class="modal fade"
-    id="createProject"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="createProjectLabel"
-    aria-hidden="true"
-    ref="createProjectRef"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addInvoiceModalLabel">Create Project</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Form Atur Tanggal -->
-          <form>
-            <div class="form-group">
-              <label for="client">Client</label>
-              <input
-                type="text"
-                class="form-control"
-                id="client"
-                v-model="dataProject.client"
-              />
-            </div>
-            <div class="form-group">
-              <label for="projectName">Project Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="projectName"
-                v-model="dataProject.projectName"
-              />
-            </div>  
-            <div class="form-group">
-              <label for="dueDate">Due Date</label>
-              <input
-                type="date"
-                class="form-control"
-                id="dueDate"
-                v-model="dataProject.dueDate"
-              />
-            </div>
-            <div class="form-group">
-              <label for="schedule">Schedule</label>
-              <input
-                type="text"
-                class="form-control"
-                id="schedule"
-                v-model="dataProject.schedule"
-              />
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" class="btn btn-primary" @click="createProject()">Simpan</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
   </div>
   <!-- end modal create project -->
 </template>
@@ -197,17 +204,26 @@ export default {
   data() {
     return {
       projects: [],
-      dataProject:{
-        client:'',
-        projectName:'',
-        dueDate:'',
-        schedule:''
+      dataProject: {
+        client: "",
+        projectName: "",
+        dueDate: "",
+        schedule: "",
       },
       role: null,
       ready: false,
+      activeStatus: "All Projects",
+      statusProject: "all",
+      view: "list",
     };
   },
   methods: {
+    setView(view) {
+      this.view = view;
+    },
+    setFilter(status) {
+      this.statusProject = status;
+    },
     async getAllDataProject() {
       try {
         const response = await axios.get(
@@ -247,6 +263,9 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    },
+    setActive(status) {
+      this.activeStatus = status;
     },
   },
   created() {
@@ -300,5 +319,46 @@ export default {
 <style>
 #content-wrapper {
   min-height: 780px !important;
+}
+
+.clickable {
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+.clickable.active {
+  color: blue;
+  text-decoration: underline;
+  text-decoration-color: blue;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 0;
+}
+
+table {
+  border: none;
+}
+
+.table {
+  margin: 0;
+  border: none;
+}
+
+.table thead th {
+  border: none;
+  background-color: #f8f9fa;
+}
+
+.table tbody tr {
+  border: none;
 }
 </style>

@@ -18,47 +18,42 @@
       </div>
     </a>
 
-    <!-- Divider -->
-    <!-- <hr class="sidebar-divider my-0 mt-5"> -->
-
-    <!-- Heading -->
-    <div class="sidebar-heading mt-5 text-light">Menu</div>
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item">
+    <li class="nav-item mt-5">
       <router-link
-        class="nav-link text-light"
+        class="nav-link"
         to="/admin-dashboard"
-        active-class="font-weight-bold"
+        active-class="active-link"
       >
-        <i class="bi bi-speedometer2 text-light"></i>
+        <i class="bi bi-grid"></i>
         <span>Dashboard</span>
       </router-link>
     </li>
     <li class="nav-item">
       <router-link
-        class="nav-link text-light"
+        class="nav-link"
         to="/admin-projects"
-        active-class="font-weight-bold"
+        active-class="active-link"
       >
-        <i class="bi bi-file-earmark-fill text-light"></i>
+        <i class="bi bi-file-earmark-fill"></i>
         <span>Projects</span>
       </router-link>
     </li>
     <li class="nav-item">
       <router-link
-        class="nav-link text-light"
+        class="nav-link"
         to="/admin-monitoring"
-        active-class="font-weight-bold"
+        active-class="active-link"
       >
-        <i class="bi bi-graph-up-arrow text-light"></i>
+        <i class="bi bi-graph-up-arrow"></i>
         <span>Monitoring</span>
       </router-link>
     </li>
     <li class="nav-item">
       <router-link
-        class="nav-link text-light"
+        class="nav-link"
         to="/admin-history"
-        active-class="font-weight-bold"
+        active-class="active-link"
       >
         <i class="bi bi-clock-history"></i>
         <span>History</span>
@@ -67,6 +62,7 @@
   </ul>
   <!-- End of Sidebar -->
 </template>
+
 <script>
 export default {
   data() {
@@ -89,24 +85,28 @@ export default {
     display: none;
   }
 }
+
 /* Gaya CSS untuk menampilkan sidebar saat sidebarToggled bernilai true */
 .toggle-sidebar {
   display: block !important;
   /* Tambahkan gaya CSS lain yang Anda inginkan untuk tampilan sidebar yang ditampilkan */
 }
-.nav-link.active-link,
-.nav-link > i {
-  font-weight: bold;
+
+.nav-link {
   color: white !important;
+  position: relative;
+  text-align: center;
 }
 
-.nav-link.active-link::before {
-  content: "";
-  display: block;
-  width: 50%;
-  height: 3px;
-  background-color: white;
-  position: absolute;
-  bottom: 0;
+.nav-link.active-link {
+  background-color: white !important;
+  color: #000 !important;
+  border-radius: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.nav-link.active-link > i {
+  color: #000 !important;
 }
 </style>
