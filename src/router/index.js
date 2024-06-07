@@ -11,7 +11,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'login',
-      component: () => import('../views/bbLogin.vue'),
+      component: () => import('../views/Login.vue'),
       alias: '/login',
       meta: {
         bodyClass: 'custom-body-style', 

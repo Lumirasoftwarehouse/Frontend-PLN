@@ -7,7 +7,9 @@
                     <h5 class="blueCustom fw-bold">PLN</h5>
                 </div>
                 <div class="col-6">
-                    <a href="#" class="float-end">Sign Up</a>
+                <router-link class="text-primary float-end" to="/register">
+                        Sign Up
+                      </router-link>
                 </div>
             </div>
         </div>
@@ -24,15 +26,15 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h3 class="card-title text-center">PLN</h3>
-                            <form>
+                            <form @submit.prevent="login">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username or Email</label>
-                                    <input type="text" class="form-control" id="username" placeholder="Enter username or email">
+                                    <input type="text" class="form-control" id="username" placeholder="Enter username or email" v-model="form.email">
                                 </div>
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
                                     <div class="input-group">
-                                        <input :type="passwordFieldType" class="form-control" id="password" placeholder="Enter password">
+                                        <input :type="passwordFieldType" class="form-control" id="password" placeholder="Enter password" v-model="form.password">
                                         <button type="button" class="btn btn-outline-secondary" @click="togglePasswordVisibility">
                                             <i :class="passwordFieldIcon"></i>
                                         </button>
@@ -54,7 +56,11 @@
                     </div>
                     <div class="card">
                         <div class="card-body text-center">
-                            <p>Don't have an account? <a href="#">Sign Up</a></p>
+                            <p>Don't have an account? 
+                            <router-link class="text-primary" to="/register">
+                        Sign Up
+                      </router-link>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -64,9 +70,20 @@
 </template>
 
 <script>
+import axios from "axios";
+import Swal from "sweetalert2";
+
 export default {
     data() {
         return {
+            form: {
+        email: null,
+        password: null,
+      },
+      uniqueValue: "",
+      cheked: false,
+      captchaValidate: true,
+      showPassword: false,
             passwordFieldType: 'password',
         };
     },
@@ -76,6 +93,45 @@ export default {
         }
     },
     methods: {
+            login() {
+      const formData = new FormData();
+      formData.append("email", this.form.email);
+      formData.append("password", this.form.password);
+
+      axios
+        .post("http://127.0.0.1:8000/api/auth/login", formData)
+        .then((response) => {
+          if (this.cheked === true) {
+            const login = JSON.stringify(this.form);
+            localStorage.setItem("login", login);
+          } else {
+            const login = localStorage.getItem("login");
+            if (login) {
+              localStorage.removeItem("login");
+            }
+          }
+
+          const token = response.data.access_token;
+          localStorage.setItem("ssoAccess", token);
+          sessionStorage.setItem("token", token);
+          if (response.data.level == "0") {
+            this.$router.push("/admin-dashboard");
+          } else if (response.data.level == "1") {
+            this.$router.push("/admin-dashboard");
+          } else {
+            this.$router.push("/unauthorized");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          this.captchaValidate = true;
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login gagal. Periksa kembali email dan password Anda.",
+          });
+        });
+    },
         togglePasswordVisibility() {
             this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
         }
