@@ -172,7 +172,7 @@ const toggleSidebar = () => {
                         statusProject == 'all' || item.status == statusProject
                       "
                     >
-                      <button class="btn btn-primary">test</button>
+                      {{item.users[0].name}}
                     </td>
                   </tr>
                 </tbody>

@@ -49,7 +49,20 @@ const toggleSidebar = () => {
                   <td>{{ item.client }}</td>
                   <td>{{ item.project }}</td>
                   <td>{{ item.dueDate }}</td>
-                  <td>{{ item.status }}</td>
+                  <td>
+                      <button
+                        class="btn btn-warning text-black"
+                        v-if="item.status == '0'"
+                      >
+                        In Progress
+                      </button>
+                      <button
+                        class="btn btn-success text-black"
+                        v-if="item.status == '1'"
+                      >
+                        Completed
+                      </button>
+                    </td>
                 </tr>
               </tbody>
             </DataTable>
