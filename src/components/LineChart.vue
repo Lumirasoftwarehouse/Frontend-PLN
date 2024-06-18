@@ -1,18 +1,16 @@
 <template>
-  <div id="chart">
     <apexchart
       type="line"
       height="350"
       :options="chartOptions"
       :series="series"
-      v-if="tampilkan"
     ></apexchart>
-  </div>
 </template>
 
 <script>
 import VueApexCharts from "vue3-apexcharts";
-import axios from "axios";
+// import { createApp } from 'vue';
+
 
 export default {
   components: {
@@ -20,55 +18,41 @@ export default {
   },
   data() {
     return {
-      tampilkan: false,
-      series: [],
+      series: [
+        {
+          name: "Desktops",
+          data: [10, 8, 15, 5, 20, 10, 10, 19, 18], // Data dummy
+        },
+      ],
       chartOptions: {
         chart: {
           height: 350,
           type: "line",
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "straight",
+        },
+        // title: {
+        //   text: "Product Trends by Month",
+        //   align: "left",
+        // },
+        grid: {
+          row: {
+            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+            opacity: 0.5,
+          },
         },
         xaxis: {
-          categories: [],
-        },
-        yaxis: {
-          labels: {
-            formatter: (value) => Math.round(value), // Format nilai menjadi bilangan bulat
-          },
-        },
-        plotOptions: {
-          line: {
-            markers: {
-              size: 6,
-            },
-          },
+          categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"], // Data dummy
         },
       },
     };
   },
-  async created() {
-  try {
-    const response = await axios.get(
-      "http://localhost:8000/api/auth/statistik/",
-      {
-        headers: {
-          Authorization: "Bearer " + sessionStorage.getItem("token"),
-        },
-      }
-    );
-    const data = response.data.data;
-
-    if (data && data.length > 0) {
-      const categories = data.map((item) => item.user.name); // Ambil nama pengguna dari data API
-      const noteCounts = data.map((item) => item.note_count);
-
-      this.chartOptions.xaxis.categories = categories; // Menggunakan array categories untuk sumbu x
-      this.series = [{ name: "Jumlah TallySheet", data: noteCounts }];
-      this.tampilkan = true;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-},
-
 };
 </script>

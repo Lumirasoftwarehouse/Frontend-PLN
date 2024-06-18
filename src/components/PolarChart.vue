@@ -12,10 +12,8 @@
 
 <script>
 import VueApexCharts from "vue3-apexcharts";
-import axios from "axios";
 
 export default {
-  el: '#app',
   components: {
     apexchart: VueApexCharts,
   },
@@ -43,25 +41,19 @@ export default {
     };
   },
   created() {
-    axios
-      .get("http://localhost:8000/api/auth/statistik-lokasi/", {
-        headers: {
-          Authorization: "Bearer " + sessionStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        const apiData = response.data.data;
-        const categories = apiData.map((item) => item.location);
-        const dataForChart = apiData.map((item) => item.total);
+    // Data dummy
+    const apiData = [
+      { location: "40%", total: 40 },
+      { location: "60%", total: 60 },
+    ];
 
-        this.chartOptions.labels = categories; // Menggunakan lokasi sebagai label
-        this.series = dataForChart;
+    const categories = apiData.map((item) => item.location);
+    const dataForChart = apiData.map((item) => item.total);
 
-        this.tampilkan = true;
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    this.chartOptions.labels = categories; // Menggunakan lokasi sebagai label
+    this.series = dataForChart;
+
+    this.tampilkan = true;
   },
 };
 </script>

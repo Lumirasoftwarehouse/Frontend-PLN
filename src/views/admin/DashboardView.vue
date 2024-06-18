@@ -2,6 +2,8 @@
 import Sidebar from "../../components/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
+import LineChart from "../../components/LineChart.vue";
+import PolarChart from "../../components/PolarChart.vue";
 import { ref } from "vue";
 
 const sidebarToggled = ref(false);
@@ -12,6 +14,7 @@ const toggleSidebar = () => {
   sidebarClass.value = sidebarToggled.value ? "toggle-sidebar" : "";
 };
 </script>
+
 <template>
   <div id="wrapper">
     <Sidebar :class="sidebarClass" />
@@ -30,12 +33,93 @@ const toggleSidebar = () => {
           >
             <h1 class="h3 mb-0 text-gray-800 text-center">Dashboard Admin</h1>
           </div>
-          <!-- Content Row -->
-          
 
-          <!-- Content Row -->
+          <!-- Full-width Blue Card -->
+          <div
+            class="card mb-4"
+            style="background-color: #007bff; color: white"
+          >
+            <div class="card-body">
+              <div class="row">
+                <div class="col-4"></div>
+                <div class="col-8">
+                  <h5 class="card-title">Hello, John Doe</h5>
+                  <p class="card-text">
+                    Let's started your project and invite your team, manage all your works.
+                  </p>
+                  <p class="card-text">
+                    and make it perfect. You're amazing!
+                  </p>
 
-          <!-- <ChatMe /> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two Smaller Cards -->
+          <div class="row">
+            <div class="col-lg-9">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <h5 class="card-title">Project Overview</h5>
+                      <PolarChart />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <h5 class="card-title">Summary</h5>
+                      <LineChart />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="card mb-4">
+                  <div class="card-body">
+                    <h5 class="card-title">Recent Project</h5>
+                    <table class="table" v-if="ready">
+                      <thead>
+                        <tr>
+                          <th scope="col">Client</th>
+                          <th scope="col">Project</th>
+                          <th scope="col">Due Date</th>
+                          <th scope="col">Expert</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item in projects" :key="item.id">
+                          <td>
+                            {{ item.client }}
+                          </td>
+                          <td>
+                            {{ item.project }}
+                          </td>
+                          <td>
+                            {{ item.dueDate }}
+                          </td>
+                          <td>
+                            {{ item.users[0].name }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="card mb-4">
+                <div class="card-body">
+                  <h5 class="card-title">Activity</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Content Row -->
         </div>
         <!-- /.container-fluid -->
       </div>
@@ -48,6 +132,7 @@ const toggleSidebar = () => {
     <!-- End of Content Wrapper -->
   </div>
 </template>
+
 <script>
 import axios from "axios";
 
@@ -55,11 +140,33 @@ export default {
   data() {
     return {
       role: null,
+      projects: [],
+      ready: false,
     };
+  },
+  methods: {
+    async getAllDataProject() {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/project/list-project`,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        this.projects = response.data.data;
+        this.ready = true;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
+  created() {
+    this.getAllDataProject();
   },
 };
 </script>
-
 
 <style>
 #content-wrapper {
