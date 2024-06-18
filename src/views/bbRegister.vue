@@ -93,78 +93,78 @@ export default {
   },
   methods: {
     registerUser() {
-      if (this.name == null || this.email == null || this.noHp == null || this.password == null) {
+      if (
+        this.name == null ||
+        this.email == null ||
+        this.noHp == null ||
+        this.password == null
+      ) {
         Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Terdapat data yang belum anda isi, mohon lengkapi semua data seblum mendaftar!!",
-                    confirmButtonText: "OK",
-        })
-      }else{
-         const formData = new FormData();
-    formData.append("name", this.name);
-    formData.append("email", this.email);
-    formData.append("no_hp", this.noHp);
-    formData.append("password", this.password);
+          icon: "error",
+          title: "Oops...",
+          text: "Terdapat data yang belum anda isi, mohon lengkapi semua data seblum mendaftar!!",
+          confirmButtonText: "OK",
+        });
+      } else {
+        const formData = new FormData();
+        formData.append("name", this.name);
+        formData.append("email", this.email);
+        formData.append("no_hp", this.noHp);
+        formData.append("password", this.password);
 
-    // Kirim permintaan POST menggunakan Axios
-    axios
-        .post(
-            "http://127.0.0.1:8000/api/auth/register",
-            formData
-        )
-        .then((response) => {
+        // Kirim permintaan POST menggunakan Axios
+        axios
+          .post("http://127.0.0.1:8000/api/auth/register", formData)
+          .then((response) => {
             console.log(response.data);
             // Periksa status code respons
             if (response.status === 201) {
-                // Menampilkan SweetAlert sukses
-                Swal.fire({
-                    icon: "success",
-                    title: "Pendaftaran berhasil!",
-                    text: "Silahkan login untuk masuk kedalam aplikasi.",
-                    confirmButtonText: "OK",
-                }).then(() => {
-                    // Arahkan pengguna ke rute '/'
-                    this.$router.push("/login");
-                });
+              // Menampilkan SweetAlert sukses
+              Swal.fire({
+                icon: "success",
+                title: "Pendaftaran berhasil!",
+                text: "Silahkan login untuk masuk kedalam aplikasi.",
+                confirmButtonText: "OK",
+              }).then(() => {
+                // Arahkan pengguna ke rute '/'
+                this.$router.push("/login");
+              });
             } else if (response.status === 400) {
-                // Menampilkan SweetAlert dengan pesan dari response
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Email atau nomor hp yang anda inputkan sama, data dilarang sama!!",
-                });
+              // Menampilkan SweetAlert dengan pesan dari response
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Email atau nomor hp yang anda inputkan sama, data dilarang sama!!",
+              });
             } else {
-                // Menampilkan SweetAlert dengan pesan umum
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Terjadi kesalahan saat mendaftar.",
-                });
+              // Menampilkan SweetAlert dengan pesan umum
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Terjadi kesalahan saat mendaftar.",
+              });
             }
-        })
-        .catch((error) => {
+          })
+          .catch((error) => {
             console.error(error);
             if (error.response && error.response.status === 400) {
-                // Menampilkan SweetAlert dengan pesan dari response
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Email atau nomor hp yang anda inputkan sama, data dilarang sama!!",
-                });
+              // Menampilkan SweetAlert dengan pesan dari response
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Email atau nomor hp yang anda inputkan sama, data dilarang sama!!",
+              });
             } else {
-                // Menampilkan SweetAlert error umum
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Terjadi kesalahan saat mendaftar.",
-                });
+              // Menampilkan SweetAlert error umum
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Terjadi kesalahan saat mendaftar.",
+              });
             }
-        });
-
+          });
       }
-   },
-
+    },
   },
 };
 </script>

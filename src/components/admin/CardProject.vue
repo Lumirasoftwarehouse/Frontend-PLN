@@ -5,6 +5,7 @@
         class="card h-100 text-white bg-primary"
         data-toggle="modal"
         data-target="#modalDetailProject"
+        @click="setDataDetail(project.id)"
       >
         <div class="card-body pt-2 ps-3 pe-3">
           <div class="status-date d-flex justify-content-between mb-2">
@@ -33,121 +34,104 @@
     </div>
   </div>
 
-<!-- modal detail project -->
-<div
-  class="modal fade"
-  id="modalDetailProject"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="modalDetailProjectLabel"
-  aria-hidden="true"
-  ref="modalDetailProjectRef"
->
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalDetailProjectLabel">Project Details</h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-8">
-            <div class="row mb-3">
-              <div class="col-6">
-                <span>Client</span><br />
-                <h5 class="fw-bold">PT Ecorn Consulting</h5>
-                <span>Project</span><br />
-                <h5 class="fw-bold">Consulting & Training</h5>
-              </div>
-              <div class="col-6 text-end">
-                <button class="btn btn-success">Completed</button>
-              </div>
-            </div>
-
-            <!-- Phases -->
-            <h6 class="mt-3">Phases</h6>
-            <div class="row mb-2">
-              <div class="col-6">
-                <span>Phase 1</span><br />
-                <span class="subPhase">Initial Consultation</span><br />
-                <span class="phaseTgl">March 15, 2021</span>
-              </div>
-              <div class="col-6 text-end">
-                <button class="btn btn-success">Completed</button>
-              </div>
-            </div>
-            <div class="row mb-2">
-              <div class="col-6">
-                <span>Phase 2</span><br />
-                <span class="subPhase">Implementation</span><br />
-                <span class="phaseTgl">April 15, 2021</span>
-              </div>
-              <div class="col-6 text-end">
-                <button class="btn btn-success">Completed</button>
-              </div>
-            </div>
-
-            <!-- Deliverables -->
-            <h6 class="mt-3">Deliverables</h6>
-            <div class="row mb-2">
-              <div class="col-6">
-                <span>Deliverable 1</span><br />
-                <h6>Project Report</h6>
-              </div>
-              <div class="col-6 text-end">
-                <button class="btn btn-success">Completed</button>
-              </div>
-            </div>
-            <div class="row mb-2">
-              <div class="col-6">
-                <span>Deliverable 2</span><br />
-                <h6>Training Materials</h6>
-              </div>
-              <div class="col-6 text-end">
-                <button class="btn btn-success">Completed</button>
-              </div>
-            </div>
-
-            <!-- Files -->
-            <h6 class="mt-3"><i class="bi bi-link-45deg"></i> Files</h6>
-            <div class="row">
-              <div class="col-6">
-                <div class="mb-3">
-                  <input type="file" class="form-control" id="file1" />
+  <!-- modal detail project -->
+  <div
+    class="modal fade"
+    id="modalDetailProject"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalDetailProjectLabel"
+    aria-hidden="true"
+    ref="modalDetailProjectRef"
+  >
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDetailProjectLabel">
+            Project Details
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-8">
+              <div class="row mb-3">
+                <div class="col-6">
+                  <span>Client</span><br />
+                  <h5 class="fw-bold">{{ detailProject.client }}</h5>
+                  <span>Project</span><br />
+                  <h5 class="fw-bold">{{ detailProject.project }}</h5>
+                </div>
+                <div class="col-6 text-end">
+                  <button class="btn btn-success">Completed</button>
                 </div>
               </div>
-              <div class="col-6">
-                <div class="mb-3">
-                  <input type="file" class="form-control" id="file2" />
+
+              <!-- Phases -->
+              <h6 class="mt-3">Phases</h6>
+              <div class="row mb-2">
+                <div
+                  class="col-6"
+                  v-for="(item, index) in detailPhase"
+                  :key="item.id"
+                >
+                  <span>Phase {{ index + 1 }}</span
+                  ><br />
+                  <span class="subPhase">{{ item.phase }}</span
+                  ><br />
+                  <span class="phaseTgl">{{ item.start_date }}</span>
+                </div>
+                <div class="col-6 text-end">
+                  <button class="btn btn-success">Completed</button>
+                </div>
+              </div>
+
+              <!-- Deliverables -->
+              <h6 class="mt-3">Deliverables</h6>
+              <div
+                class="row mb-2"
+                v-for="(item, index) in detailDeliverable"
+                :key="item.id"
+              >
+                <div class="col-6">
+                  <span>Deliverable {{ index + 1 }}</span
+                  ><br />
+                  <h6>{{ item.deliverable }}</h6>
+                  <h6><i class="bi bi-link-45deg"></i> {{ item.file }}</h6>
+                  <h6>{{ item.notes }}</h6>
+                </div>
+                <div class="col-6 text-end">
+                  <button class="btn btn-success">Completed</button>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Right column -->
-          <div class="col-4">
-            <span>Due Date</span><br />
-            <h5 class="fw-bold">Mar 26, 2021</h5><br />
-            <span>People</span><br />
-            <div class="d-flex align-items-center mb-3">
-              <img src="path/to/photo.jpg" class="rounded-circle me-2" alt="User Photo" width="50" height="50" />
-              <div>
-                <h6 class="mb-0">John Doe</h6>
-                <small>Project Manager</small>
-              </div>
-            </div>
-            <div class="d-flex align-items-center">
-              <img src="path/to/photo.jpg" class="rounded-circle me-2" alt="User Photo" width="50" height="50" />
-              <div>
-                <h6 class="mb-0">Jane Smith</h6>
-                <small>Consultant</small>
+            <!-- Right column -->
+            <div class="col-4">
+              <span>Due Date</span><br />
+              <h5 class="fw-bold">{{ detailProject.dueDate }}</h5>
+              <br />
+              <span>People</span><br />
+              <div class="d-flex align-items-center mb-3" v-for="item in detailUserProject"
+                :key="item.id">
+                <img
+                  src="path/to/photo.jpg"
+                  class="rounded-circle me-2"
+                  alt="User Photo"
+                  width="50"
+                  height="50"
+                />
+                <div>
+                  <h6 class="mb-0">{{item.name}}</h6>
+                  <small>{{item.position}}</small>
+                </div>
               </div>
             </div>
           </div>
@@ -155,13 +139,11 @@
       </div>
     </div>
   </div>
-</div>
-<!-- end modal detail project -->
-
-
+  <!-- end modal detail project -->
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "CardProject",
   props: {
@@ -170,6 +152,38 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      detailProject: [],
+      detailPhase: [],
+      detailDeliverable: [],
+      detailUserProject: [],
+    };
+  },
+  methods: {
+    setDataDetail(id) {
+      this.getAllDataProject(id);
+    },
+    async getAllDataProject(id) {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/project/detail-project/${id}`,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        this.detailProject = response.data.data.dataProject;
+        this.detailPhase = response.data.data.dataPhase;
+        this.detailDeliverable = response.data.data.dataDeliverable;
+        this.detailUserProject = response.data.data.dataUserProject;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
+  created() {},
 };
 </script>
 

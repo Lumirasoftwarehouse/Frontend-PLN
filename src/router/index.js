@@ -50,6 +50,19 @@ const router = createRouter({
       name: 'admin-schedule',
       component: () => import('../views/admin/Schedule.vue')
     },
+    
+  
+    // user
+    {
+      path: '/user-dashboard',
+      name: 'user-dashboard',
+      component: () => import('../views/user/DashboardView.vue')
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/admin/Profile.vue')
+    },
 
 
     {
