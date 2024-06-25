@@ -2,7 +2,9 @@
   <!-- Topbar -->
   <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow">
     <!-- Search bar -->
-    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+    <form
+      class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+    >
       <div class="input-group">
         <input
           type="text"
@@ -23,13 +25,24 @@
     <ul class="navbar-nav ml-auto">
       <!-- Nav Item - Alerts -->
       <li class="nav-item dropdown no-arrow mx-1">
-        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="alertsDropdown"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
           <i class="fas fa-bell fa-fw text-primary"></i>
           <!-- Counter - Alerts -->
           <span class="badge badge-danger badge-counter">3+</span>
         </a>
         <!-- Dropdown - Alerts -->
-        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+        <div
+          class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+          aria-labelledby="alertsDropdown"
+        >
           <h6 class="dropdown-header">Alerts Center</h6>
           <a class="dropdown-item d-flex align-items-center" href="#">
             <div class="mr-3">
@@ -39,7 +52,9 @@
             </div>
             <div>
               <div class="small text-gray-500">December 12, 2019</div>
-              <span class="font-weight-bold">A new monthly report is ready to download!</span>
+              <span class="font-weight-bold"
+                >A new monthly report is ready to download!</span
+              >
             </div>
           </a>
           <a class="dropdown-item d-flex align-items-center" href="#">
@@ -61,10 +76,13 @@
             </div>
             <div>
               <div class="small text-gray-500">December 2, 2019</div>
-              Spending Alert: We've noticed unusually high spending for your account.
+              Spending Alert: We've noticed unusually high spending for your
+              account.
             </div>
           </a>
-          <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+          <a class="dropdown-item text-center small text-gray-500" href="#"
+            >Show All Alerts</a
+          >
         </div>
       </li>
 
@@ -72,17 +90,45 @@
 
       <!-- Nav Item - User Information -->
       <li class="nav-item dropdown no-arrow">
-        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="mr-2 d-none d-lg-inline text-black small">{{ this.name }}</span>
-          <img src="/img/nobi.jpg" alt=" gambarprofile" class="img-profile rounded-circle" />
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="userDropdown"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span class="mr-2 d-none d-lg-inline text-black small">{{
+            this.name
+          }}</span>
+          <img
+            src="/img/nobi.jpg"
+            alt=" gambarprofile"
+            class="img-profile rounded-circle"
+          />
         </a>
         <!-- Dropdown - User Information -->
-        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-          <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal" @click="konfirmasi()">
+        <div
+          class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+          aria-labelledby="userDropdown"
+        >
+          <router-link
+            class="dropdown-item"
+            to="/profile"
+            data-toggle="modal"
+            data-target="#logoutModal"
+          >
             <i class="bi bi-person"></i>
             Profile
-          </a>
-          <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal" @click="konfirmasi()">
+          </router-link>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-toggle="modal"
+            data-target="#logoutModal"
+            @click="konfirmasi()"
+          >
             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
             Logout
           </a>
@@ -142,11 +188,15 @@ export default {
       }
 
       axios
-        .post(`https://backend-webmember.lumirainternational.com/api/auth/logout`, null, {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
+        .post(
+          `https://backend-webmember.lumirainternational.com/api/auth/logout`,
+          null,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
         .then((response) => {
           Swal.fire({
             title: `Logout berhasil!`,

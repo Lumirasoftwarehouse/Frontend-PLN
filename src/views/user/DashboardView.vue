@@ -33,7 +33,6 @@ const toggleSidebar = () => {
           <!-- Content Row -->
           
 
-          <!-- Content Row -->
 
           <!-- <ChatMe /> -->
         </div>

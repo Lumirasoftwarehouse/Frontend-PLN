@@ -1,88 +1,218 @@
 <template>
-  <div class="profile-container">
-    <b-container>
-      <b-row class="justify-content-center">
-        <b-col md="6">
-          <b-card no-body class="overflow-hidden shadow-lg">
-            <div class="profile-header">
-              <img src="@/assets/profile.jpg" alt="Profile Image" class="profile-img">
-            </div>
-            <b-card-body class="text-center">
-              <h3 class="profile-name">{{ name }}</h3>
-              <h5 class="profile-position text-muted">{{ position }}</h5>
-              <p class="profile-email text-secondary">{{ email }}</p>
-              <b-button variant="primary" class="mr-2">Edit Profile</b-button>
-              <b-button variant="outline-secondary">Settings</b-button>
-              <div class="profile-social mt-3">
-                <a href="#" class="text-info mr-2"><i class="fab fa-twitter fa-lg"></i></a>
-                <a href="#" class="text-primary mr-2"><i class="fab fa-linkedin fa-lg"></i></a>
-                <a href="#" class="text-dark"><i class="fab fa-github fa-lg"></i></a>
+  <div id="wrapper">
+    <Sidebar :class="sidebarClass" />
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <Navbar @toggle-sidebar="toggleSidebar" />
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid mt-4">
+          <!-- Page Heading -->
+          <div
+            class="d-sm-flex align-items-center justify-content-between mb-4"
+          >
+            <h1 class="h3 mb-0 text-gray-800 text-center">Profile</h1>
+          </div>
+          <!-- Content Row -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card shadow">
+                <div class="card-body text-center">
+                  <img
+                    :src="`http://localhost:8000/storage/profiles/${user.image}`"
+                    class="img-fluid rounded-circle mb-3"
+                    alt="Profile Picture"
+                    width="150"
+                    height="150"
+                  />
+                  <h4>{{ user.name }}</h4>
+                  <p>{{ user.email }}</p>
+                  <p>{{ user.position }}</p>
+                  <button
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#updateProfile"
+                  >
+                    Update Profile
+                  </button>
+                </div>
               </div>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-container>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <Footer />
+      <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+
+    <!-- Update Profile Modal -->
+    <div
+      class="modal fade"
+      id="updateProfile"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="updateProfileLabel"
+      aria-hidden="true"
+      ref="updateProfileRef"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addInvoiceModalLabel">
+              Update Profile
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="updateUserProfile">
+              <div class="form-group">
+                <label for="profileImage">Profile Image</label>
+                <input
+                  type="file"
+                  id="profileImage"
+                  class="form-control"
+                  @change="onImageChange"
+                />
+                <i>{{user.image}}</i>
+              </div>
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  class="form-control"
+                  v-model="user.name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="form-control"
+                  v-model="user.email"
+                />
+              </div>
+              <div class="form-group">
+                <label for="position">Position</label>
+                <input
+                  type="text"
+                  id="position"
+                  class="form-control"
+                  v-model="user.position"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Sidebar from "../../components/Sidebar.vue";
+import Navbar from "../../components/Navbar-Admin.vue";
+import Footer from "../../components/Footer.vue";
+import axios from "axios";
+import Swal from "sweetalert2";
+
 export default {
-  name: 'Profile',
+  components: {
+    Sidebar,
+    Navbar,
+    Footer,
+  },
   data() {
     return {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      position: 'Software Engineer',
+      sidebarToggled: false,
+      sidebarClass: "",
+      user: {
+        id:"",
+        image: "",
+        name: "",
+        email: "",
+        position: "",
+      },
+      showModal: false,
     };
+  },
+  methods: {
+    toggleSidebar() {
+      this.sidebarToggled = !this.sidebarToggled;
+      this.sidebarClass = this.sidebarToggled ? "toggle-sidebar" : "";
+    },
+    async fetchUserData() {
+      try {
+        const response = await axios.get("http://localhost:8000/api/auth/me", {
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+        });
+        this.user = response.data;
+      } catch (error) {
+        console.error("Error fetching user data", error);
+      }
+    },
+    async updateUserProfile() {
+      try {
+        const formData = new FormData();
+        formData.append("image", this.user.image);
+        formData.append("name", this.user.name);
+        formData.append("email", this.user.email);
+        formData.append("position", this.user.position);
+
+        await axios.post(
+          `http://localhost:8000/api/auth/update/${this.user.id}`,
+          formData,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        Swal.fire({
+          icon: "success",
+          title: "Request Success!",
+          text: "Profile berhasil diupdate",
+          confirmButtonText: "OK",
+        }).then(() => {
+          $("#updateProfile").modal("hide");
+          this.$router.push("/profile");
+        });
+        this.fetchUserData();
+      } catch (error) {
+        console.error("Error updating user profile", error);
+      }
+    },
+    onImageChange(event) {
+      this.user.image = event.target.files[0];
+    },
+  },
+  created() {
+    this.fetchUserData();
   },
 };
 </script>
 
-<style scoped>
-.profile-container {
-  padding: 60px 0;
-  background-color: #f0f2f5;
-}
-
-.profile-header {
-  background-color: #343a40;
-  padding: 20px;
-  text-align: center;
-}
-
-.profile-img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 5px solid #fff;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  object-fit: cover;
-}
-
-.profile-name {
-  font-size: 1.75rem;
-  font-weight: bold;
-  color: #343a40;
-  margin-top: 10px;
-}
-
-.profile-position {
-  font-size: 1.25rem;
-  margin-bottom: 10px;
-}
-
-.profile-email {
-  font-size: 1rem;
-  margin-bottom: 20px;
-}
-
-.profile-social a {
-  font-size: 1.5rem;
-}
-
-.profile-social a:hover {
-  text-decoration: none;
-  opacity: 0.8;
+<style>
+#content-wrapper {
+  min-height: 780px !important;
 }
 </style>

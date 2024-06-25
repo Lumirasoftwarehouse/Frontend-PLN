@@ -46,9 +46,16 @@ const router = createRouter({
     },
 
     {
-      path: '/admin-schedule',
+      path: '/admin-schedule/:id',
       name: 'admin-schedule',
-      component: () => import('../views/admin/Schedule.vue')
+      component: () => import('../views/admin/Schedule.vue'),
+      props: true
+    },
+    {
+      path: '/detail-schedule',
+      name: 'detail-schedule',
+      component: () => import('../views/admin/DetailSchedule.vue'),
+      // props: true
     },
     
   

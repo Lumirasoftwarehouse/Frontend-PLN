@@ -142,7 +142,11 @@ const toggleSidebar = () => {
                           >
                             <i class="bi bi-pencil-square"></i>
                           </button>
-                          <button type="button" class="btn btn-danger" @click="konfirmasi(item.id, item.project)">
+                          <button
+                            type="button"
+                            class="btn btn-danger"
+                            @click="konfirmasi(item.id, item.project)"
+                          >
                             <i class="bi bi-trash3"></i>
                           </button>
                         </div>
@@ -199,7 +203,13 @@ const toggleSidebar = () => {
                         statusProject == 'all' || item.status == statusProject
                       "
                     >
-                      <router-link class="btn btn-primary" to="/admin-schedule">
+                      <router-link
+                        class="btn btn-primary"
+                        :to="{
+                          name: 'admin-schedule',
+                          params: { id: item.id },
+                        }"
+                      >
                         View
                       </router-link>
                     </td>
@@ -208,7 +218,14 @@ const toggleSidebar = () => {
                         statusProject == 'all' || item.status == statusProject
                       "
                     >
-                      {{ item.users[0].name }}
+                      <div class="user-info">
+                        <img
+                          :src="`http://localhost:8000/storage/profiles/${item.users[0].image}`"
+                          alt="Profile Picture"
+                          class="profile-image"
+                        />
+                        {{ item.users[0].name }}
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -525,7 +542,7 @@ export default {
         cancelButtonText: "Batal",
       }).then((result) => {
         if (result.isConfirmed) {
-          this.deleteProject(idProject)    
+          this.deleteProject(idProject);
         }
       });
     },
@@ -541,11 +558,14 @@ export default {
         );
         console.log(response.data); // Handle response from server
         this.getAllDataProject(); // Reload the misi data after adding a new one
-        this.showAlert('Success', 'Benefit berhasil didelete', 'success');
+        this.showAlert("Success", "Benefit berhasil didelete", "success");
       } catch (error) {
         console.error(error); // Handle error if any
-               this.showAlert('Oops...', 'Terjadi kesalahan saat mendelete benefit', 'error');
-       
+        this.showAlert(
+          "Oops...",
+          "Terjadi kesalahan saat mendelete benefit",
+          "error"
+        );
       }
     },
     showAlert(title, text, icon) {
@@ -553,8 +573,7 @@ export default {
         title: title,
         text: text,
         icon: icon, // Atau gunakan icon lain sesuai kebutuhan
-      }).then(() => {
-      });
+      }).then(() => {});
     },
     async getDetailDataProject(id) {
       try {
@@ -675,6 +694,19 @@ export default {
 <style>
 #content-wrapper {
   min-height: 780px !important;
+}
+
+.profile-image {
+  width: 40px; /* Sesuaikan ukuran gambar sesuai kebutuhan */
+  height: 40px; /* Sesuaikan ukuran gambar sesuai kebutuhan */
+  border-radius: 50%; /* Membuat gambar menjadi bulat */
+  object-fit: cover; /* Menjaga rasio gambar dan memastikan gambar memenuhi kotak */
+  margin-right: 10px; /* Memberikan sedikit jarak antara gambar dan teks */
+}
+
+.user-info {
+  display: flex;
+  align-items: center; /* Menjaga gambar dan teks berada di tengah secara vertikal */
 }
 
 .clickable {
