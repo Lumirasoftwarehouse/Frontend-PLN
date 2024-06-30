@@ -60,7 +60,7 @@
 <script>
 import axios from "axios";
 import { ref, computed, watchEffect } from "vue";
-import Sidebar from "../../components/Sidebar.vue";
+import Sidebar from "../../components/Sidebar-User.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 

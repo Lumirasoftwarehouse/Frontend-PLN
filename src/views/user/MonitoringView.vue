@@ -2,8 +2,6 @@
 import Sidebar from "../../components/Sidebar-User.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
-import LineChart from "../../components/LineChart.vue";
-import PolarChart from "../../components/PolarChart.vue";
 import { ref } from "vue";
 
 const sidebarToggled = ref(false);
@@ -14,7 +12,6 @@ const toggleSidebar = () => {
   sidebarClass.value = sidebarToggled.value ? "toggle-sidebar" : "";
 };
 </script>
-
 <template>
   <div id="wrapper">
     <Sidebar :class="sidebarClass" />
@@ -31,95 +28,46 @@ const toggleSidebar = () => {
           <div
             class="d-sm-flex align-items-center justify-content-between mb-4"
           >
-            <h1 class="h3 mb-0 text-gray-800 text-center">Dashboard User</h1>
-          </div>
-
-          <!-- Full-width Blue Card -->
-          <div
-            class="card mb-4"
-            style="background-color: #007bff; color: white"
-          >
-            <div class="card-body">
-              <div class="row">
-                <div class="col-4"></div>
-                <div class="col-8">
-                  <h5 class="card-title">Hello, John Doe</h5>
-                  <p class="card-text">
-                    Let's started your project and invite your team, manage all your works.
-                  </p>
-                  <p class="card-text">
-                    and make it perfect. You're amazing!
-                  </p>
-
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Two Smaller Cards -->
-          <div class="row">
-            <div class="col-lg-9">
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="card mb-4">
-                    <div class="card-body">
-                      <h5 class="card-title">Project Overview</h5>
-                      <PolarChart />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="card mb-4">
-                    <div class="card-body">
-                      <h5 class="card-title">Summary</h5>
-                      <LineChart />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="card mb-4">
-                  <div class="card-body">
-                    <h5 class="card-title">Recent Project</h5>
-                    <table class="table" v-if="ready">
-                      <thead>
-                        <tr>
-                          <th scope="col">Client</th>
-                          <th scope="col">Project</th>
-                          <th scope="col">Due Date</th>
-                          <th scope="col">Expert</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="item in projects" :key="item.id">
-                          <td>
-                            {{ item.client }}
-                          </td>
-                          <td>
-                            {{ item.project }}
-                          </td>
-                          <td>
-                            {{ item.dueDate }}
-                          </td>
-                          <td>
-                            {{ item.users[0].name }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3">
-              <div class="card mb-4">
-                <div class="card-body">
-                  <h5 class="card-title">Activity</h5>
-                </div>
-              </div>
-            </div>
+            <h1 class="h3 mb-0 text-gray-800 text-center">Monitoring</h1>
           </div>
           <!-- Content Row -->
+          <div class="table-responsive">
+            <div v-if="!ready" class="preloader"></div>
+            <DataTable class="display table table-striped" v-if="ready">
+              <thead>
+                <tr>
+                  <th scope="col">No</th>
+                  <th scope="col">Client</th>
+                  <th scope="col">Project</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in projects" :key="item.id">
+                  <th scope="row">{{ index + 1 }}</th>
+                  <td>{{ item.client }}</td>
+                  <td>{{ item.project }}</td>
+                  <td>{{ item.dueDate }}</td>
+                  <td>
+                      <button
+                        class="btn btn-warning text-black"
+                        v-if="item.status == '0'"
+                      >
+                        In Progress
+                      </button>
+                      <button
+                        class="btn btn-success text-black"
+                        v-if="item.status == '1'"
+                      >
+                        Completed
+                      </button>
+                    </td>
+                </tr>
+              </tbody>
+            </DataTable>
+          </div>
+          <ChatMe />
         </div>
         <!-- /.container-fluid -->
       </div>
@@ -132,15 +80,24 @@ const toggleSidebar = () => {
     <!-- End of Content Wrapper -->
   </div>
 </template>
-
 <script>
 import axios from "axios";
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net";
+
+DataTable.use(DataTablesCore);
 
 export default {
   data() {
     return {
-      role: null,
       projects: [],
+      dataProject:{
+        client:'',
+        projectName:'',
+        dueDate:'',
+        schedule:''
+      },
+      role: null,
       ready: false,
     };
   },
@@ -157,6 +114,30 @@ export default {
         );
         this.projects = response.data.data;
         this.ready = true;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async createProject() {
+      try {
+        const formData = new FormData();
+        formData.append("client", this.dataProject.client);
+        formData.append("project", this.dataProject.projectName);
+        formData.append("dueDate", this.dataProject.dueDate);
+        formData.append("schedule", this.dataProject.schedule);
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/project/create-project`,
+          formData,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        this.ready = false;
+        // this.showAlert();
+        this.getAllDataProject();
+        console.log("ini invoice", this.invoices);
       } catch (error) {
         console.error(error);
       }
@@ -208,6 +189,9 @@ export default {
   },
 };
 </script>
+
+
+
 
 <style>
 #content-wrapper {

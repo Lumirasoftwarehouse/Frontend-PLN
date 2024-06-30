@@ -52,10 +52,10 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/detail-schedule',
+      path: '/detail-schedule/:id',
       name: 'detail-schedule',
       component: () => import('../views/admin/DetailSchedule.vue'),
-      // props: true
+      props: true
     },
     
   
@@ -65,6 +65,39 @@ const router = createRouter({
       name: 'user-dashboard',
       component: () => import('../views/user/DashboardView.vue')
     },
+    {
+      path: '/user-projects',
+      name: 'user-projects',
+      component: () => import('../views/user/ProjectView.vue')
+    },
+    {
+      path: '/user-create-project',
+      name: 'user-create-project',
+      component: () => import('../views/user/CreateProject.vue')
+    },
+    {
+      path: '/user-monitoring',
+      name: 'user-monitoring',
+      component: () => import('../views/user/MonitoringView.vue')
+    },
+    {
+      path: '/user-history',
+      name: 'user-history',
+      component: () => import('../views/user/HistoryView.vue')
+    },
+
+    {
+      path: '/user-schedule/:id',
+      name: 'user-schedule',
+      component: () => import('../views/user/Schedule.vue'),
+      props: true
+    },
+    // {
+    //   path: '/detail-schedule/:id',
+    //   name: 'detail-schedule',
+    //   component: () => import('../views/user/DetailSchedule.vue'),
+    //   props: true
+    // },
     {
       path: '/profile',
       name: 'profile',
