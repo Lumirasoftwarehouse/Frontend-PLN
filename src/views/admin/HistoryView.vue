@@ -41,8 +41,11 @@ const toggleSidebar = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in projects" :key="item.id">
-                  <td>{{ item.client }}</td>
+                <tr v-for="item in penggunas" :key="item.id">
+                  <td>
+                    <img :src="`http://localhost:8000/storage/profiles/${item.image}`" class="rounded-circle" width="40" alt="profile">
+                    {{ item.name }}
+                    </td>
                   <td>{{ item.created_at }}</td>
                 </tr>
               </tbody>
@@ -73,7 +76,7 @@ DataTable.use(DataTablesCore);
 export default {
   data() {
     return {
-      projects: [],
+      penggunas: [],
       dataProject:{
         client:'',
         projectName:'',
@@ -85,17 +88,17 @@ export default {
     };
   },
   methods: {
-    async getAllDataProject() {
+    async getAllDataPengguna() {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/project/list-project`,
+          `http://127.0.0.1:8000/api/auth/list-pengguna`,
           {
             headers: {
               Authorization: "Bearer " + sessionStorage.getItem("token"),
             },
           }
         );
-        this.projects = response.data.data;
+        this.penggunas = response.data.data;
         this.ready = true;
       } catch (error) {
         console.error(error);
@@ -119,7 +122,7 @@ export default {
         );
         this.ready = false;
         // this.showAlert();
-        this.getAllDataProject();
+        this.getAllDataPengguna();
         console.log("ini invoice", this.invoices);
       } catch (error) {
         console.error(error);
@@ -160,7 +163,7 @@ export default {
           sessionStorage.removeItem("token");
         }
         // success
-        this.getAllDataProject();
+        this.getAllDataPengguna();
         // akhir
       } catch (error) {
         console.error("Error decoding token:", error);

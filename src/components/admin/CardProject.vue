@@ -1,6 +1,9 @@
 <template>
   <div class="row">
-    <div class="col-md-3 mb-3" v-for="project in projects" :key="project.id">
+    <div
+      class="col-md-3 mb-3"
+      v-for="project in filteredProjects" :key="project.id"
+    >
       <div
         class="card h-100 text-white bg-primary"
         data-toggle="modal"
@@ -16,7 +19,7 @@
                 'status-inactive': project.status === '0',
               }"
             >
-              {{ project.status === "1" ? "In Progress" : "Completed" }}
+              {{ project.status === "1" ? "Completed" : "In Progress" }}
             </span>
             <span class="date">
               {{ new Date(project.dueDate).toLocaleDateString() }}
@@ -119,8 +122,11 @@
               <h5 class="fw-bold">{{ detailProject.dueDate }}</h5>
               <br />
               <span>People</span><br />
-              <div class="d-flex align-items-center mb-3" v-for="item in detailUserProject"
-                :key="item.id">
+              <div
+                class="d-flex align-items-center mb-3"
+                v-for="item in detailUserProject"
+                :key="item.id"
+              >
                 <img
                   src="path/to/photo.jpg"
                   class="rounded-circle me-2"
@@ -129,8 +135,8 @@
                   height="50"
                 />
                 <div>
-                  <h6 class="mb-0">{{item.name}}</h6>
-                  <small>{{item.position}}</small>
+                  <h6 class="mb-0">{{ item.name }}</h6>
+                  <small>{{ item.position }}</small>
                 </div>
               </div>
             </div>
@@ -151,6 +157,10 @@ export default {
       type: Array,
       required: true,
     },
+    statusProject: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -159,6 +169,15 @@ export default {
       detailDeliverable: [],
       detailUserProject: [],
     };
+  },
+  computed: {
+    filteredProjects() {
+      if (this.statusProject === 'all') {
+        return this.projects;
+      } else {
+        return this.projects.filter(project => project.status === this.statusProject);
+      }
+    }
   },
   methods: {
     setDataDetail(id) {
@@ -183,7 +202,6 @@ export default {
       }
     },
   },
-  created() {},
 };
 </script>
 

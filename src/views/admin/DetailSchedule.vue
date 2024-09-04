@@ -75,10 +75,14 @@ const toggleSidebar = () => {
                 </div>
               </div>
               <div class="row">
-                <div class="col-6"></div>
                 <div class="col-6">
+                  <router-link to="/admin-projects">
                   <button class="btn btn-outline-primary">Cancel</button>
-                  <button class="btn btn-primary float-end">
+
+                  </router-link>
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-primary float-end" type="submit" @click="updatePhase()">
                     Save Changes
                   </button>
                 </div>
@@ -127,6 +131,10 @@ export default {
       type: String,
       required: true,
     },
+    idProyek: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -144,7 +152,7 @@ export default {
     };
   },
   methods:{
-    async createProject() {
+    async updatePhase() {
       try {
         const formData = new FormData();
         formData.append("phase", this.formUpdatePhase.phase);

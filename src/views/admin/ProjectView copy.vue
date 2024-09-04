@@ -281,7 +281,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 #content-wrapper {
   min-height: 780px !important;
 }

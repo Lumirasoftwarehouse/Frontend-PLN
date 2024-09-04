@@ -43,7 +43,7 @@ const toggleSidebar = () => {
               <div class="row">
                 <div class="col-4"></div>
                 <div class="col-8">
-                  <h5 class="card-title">Hello, John Doe</h5>
+                  <h5 class="card-title">Hello, {{name}}</h5>
                   <p class="card-text">
                     Let's started your project and invite your team, manage all your works.
                   </p>
@@ -141,6 +141,7 @@ export default {
     return {
       role: null,
       projects: [],
+      name:"",
       ready: false,
     };
   },
@@ -189,6 +190,7 @@ export default {
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
+        this.name = tokenPayload.name;
         if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {

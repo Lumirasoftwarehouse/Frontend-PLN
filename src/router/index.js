@@ -52,7 +52,7 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/detail-schedule/:id',
+      path: '/detail-schedule/:id/:idProyek',
       name: 'detail-schedule',
       component: () => import('../views/admin/DetailSchedule.vue'),
       props: true

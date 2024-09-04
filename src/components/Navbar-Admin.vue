@@ -189,7 +189,7 @@ export default {
 
       axios
         .post(
-          `https://backend-webmember.lumirainternational.com/api/auth/logout`,
+          `http://127.0.0.1:8000/api/auth/logout`,
           null,
           {
             headers: {
@@ -242,12 +242,6 @@ export default {
 </script>
 
 <style scoped>
-.customNav {
-  border-bottom: 5px solid #fac800;
-}
-.bgCustom {
-  background-color: #061387;
-}
 .img-profile {
   height: 40px;
   width: 40px;

@@ -21,7 +21,7 @@ const toggleSidebar = () => {
     <div id="content-wrapper" class="d-flex flex-column">
       <!-- Main Content -->
       <div id="content">
-        <Navbar @toggle-sidebar="toggleSidebar" />
+        <Navbar @toggle-sidebar="toggleSidebar"/>
 
         <!-- Begin Page Content -->
         <div class="container-fluid mt-4">
@@ -68,15 +68,32 @@ const toggleSidebar = () => {
             <div class="col-sm-4">
               <div class="row">
                 <div class="col-sm-4">
-                  <button class="btn bg-black me-2" @click="setView('list')">
-                    <i class="bi bi-list text-white"></i>
+                  <button
+                    class="btn me-2"
+                    style="border: 1px solid black"
+                    @click="setView('list')"
+                    :class="{
+                      'bg-black': view === 'list',
+                    }"
+                  >
+                    <i
+                      class="bi bi-list"
+                      :class="{
+                        'text-white': view === 'list',
+                      }"
+                    ></i>
                   </button>
                   <button
                     class="btn"
                     style="border: 1px solid black"
                     @click="setView('block')"
+                    :class="{
+                      'bg-black': view === 'block',
+                    }"
                   >
-                    <i class="bi bi-grid-fill text-black"></i>
+                    <i class="bi bi-grid-fill" :class="{
+                        'text-black': view === 'list',
+                      }"></i>
                   </button>
                 </div>
                 <div class="col-sm-6">
@@ -94,13 +111,17 @@ const toggleSidebar = () => {
             </div>
           </div>
           <!-- Content Row -->
-          <CardProject :projects="projects" v-if="view == 'block'" />
-          <div class="card mt-4" v-if="view == 'list'">
-            <div class="card-body">
+          <CardProject
+            :projects="projects"
+            :statusProject="statusProject"
+            v-if="view == 'block'"
+          />
+          <div class="table-responsive">
               <div v-if="!ready" class="preloader"></div>
-              <table class="table" v-if="ready">
+              <DataTable class="display table table-striped" v-if="ready">
                 <thead>
                   <tr>
+                    <th scope="col">No</th>
                     <th scope="col">Action</th>
                     <th scope="col">Client</th>
                     <th scope="col">Project</th>
@@ -112,7 +133,8 @@ const toggleSidebar = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in projects" :key="item.id">
+                  <tr v-for="(item, index) in projects" :key="item.id">
+                    <td>{{index + 1}}</td>
                     <td
                       v-if="
                         statusProject == 'all' || item.status == statusProject
@@ -229,9 +251,16 @@ const toggleSidebar = () => {
                     </td>
                   </tr>
                 </tbody>
-              </table>
-            </div>
+                
+              </DataTable>
           </div>
+          <!-- <div class="card mt-4" v-if="view == 'list'">
+            <div class="card-body">
+              <table class="table" >
+              </table>
+              
+            </div>
+          </div> -->
           <ChatMe />
         </div>
         <!-- /.container-fluid -->
@@ -691,7 +720,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 #content-wrapper {
   min-height: 780px !important;
 }
@@ -732,7 +761,7 @@ export default {
   padding: 0;
 }
 
-table {
+/* table {
   border: none;
 }
 
@@ -748,5 +777,5 @@ table {
 
 .table tbody tr {
   border: none;
-}
+} */
 </style>

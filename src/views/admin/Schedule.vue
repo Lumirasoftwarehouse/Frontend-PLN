@@ -31,7 +31,7 @@
                   <router-link
                     :to="{
                       name: 'detail-schedule',
-                      params: { id: event.id },
+                      params: { id: event.id, idProyek: id },
                     }"
                   >
                     <div class="event-box">
