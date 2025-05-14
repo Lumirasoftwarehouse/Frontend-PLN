@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../../components/Sidebar-User.vue";
+import Sidebar from "../../components/manager/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 import { ref } from "vue";
@@ -27,52 +27,82 @@ const toggleSidebar = () => {
           <!-- Content Row -->
           <div class="row">
             <div class="col-sm-8">
-              <div class="row mb-3">
-                <div class="col-sm-2">Phase</div>
-                <div class="col-sm-10">
-                  <input
-                    type="text"
-                    class="form-control mb-3"
-                    id="internalMeer"
-                    placeholder="phase"
-                    v-model="dataPhase.phase"
-                    disabled
-                  />
-                </div>
-              </div>
+              <input
+                type="text"
+                class="form-control mb-3"
+                id="internalMeer"
+                placeholder="phase"
+                v-model="formUpdatePhase.phase"
+              />
               <div class="row mb-3">
                 <div class="col-sm-2">Date</div>
-                <div class="col-sm-10">
-                  <input
-                    type="date"
-                    class="form-control"
-                    id="tanggal"
-                    v-model="formLaporanPhase.tanggal"
-                  />
+                <div class="col-sm-5">
+                  <input type="date" class="form-control" id="startDate" v-model="formUpdatePhase.start_date"/>
+                </div>
+                <div class="col-sm-5">
+                  <input type="date" class="form-control" id="endDate" v-model="formUpdatePhase.end_date"/>
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col-sm-2">Lampiran</div>
-                <div class="col-sm-10">
-                  <input type="file" class="form-control" id="lampiran" />
+                <div class="col-sm-2">Time</div>
+                <div class="col-sm-5">
+                  <input type="number" class="form-control" id="startTime" v-model="formUpdatePhase.start_time"/>
+                </div>
+                <div class="col-sm-5">
+                  <input type="number" class="form-control" id="endTime" v-model="formUpdatePhase.end_time"/>
                 </div>
               </div>
+              <div class="row mb-3">
+                <div class="col-sm-2">Repeat</div>
+                <div class="col-sm-5">
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    v-model="formUpdatePhase.repeat"
+                  >
+                    <option selected>Pilih</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+                <div class="col-sm-5"></div>
+              </div>
               <div class="row mb-4">
-                <div class="col-sm-2">Laporan</div>
+                <div class="col-sm-2">Notes</div>
                 <div class="col-sm-10">
-                  <textarea
-                    class="form-control"
-                    id="laporan"
-                    rows="3"
-                    v-model="formLaporanPhase.laporan"
-                  ></textarea>
+                  <textarea class="form-control" id="notes" rows="3" v-model="formUpdatePhase.notes"></textarea>
                 </div>
               </div>
               <div class="row">
-                <div class="col-8"></div>
-                <div class="col-4">
-                  <button class="btn btn-danger">Cancel</button>
-                  <button class="btn btn-primary float-end" @click="createLaporanPhase">Save</button>
+                <div class="col-6">
+                  <router-link to="/manager-projects">
+                  <button class="btn btn-outline-primary">Cancel</button>
+
+                  </router-link>
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-primary float-end" type="submit" @click="updatePhase()">
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="kodeProgram"
+                  placeholder="Cari user"
+                />
+                <div class="input-group-prepend">
+                  <span
+                    class="input-group-text"
+                    @click="copyKodeProgram"
+                  >
+                    <i class="bi bi-person-add"></i>
+                  </span>
                 </div>
               </div>
             </div>
@@ -101,31 +131,39 @@ export default {
       type: String,
       required: true,
     },
+    idProyek: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       role: null,
       dataPhase: [],
-      formLaporanPhase: {
-        tanggal: "",
-        laporan: "",
-        lampiran: "",
-        id_phase: "",
-        id_user: "",
-      },
+      formUpdatePhase:{
+        phase : "", 
+        start_date : "", 
+        end_date : "", 
+        start_time : "",
+        end_time : "",
+        repeat : "",
+        notes : ""
+      }
     };
   },
-  methods: {
-    async createLaporanPhase() {
+  methods:{
+    async updatePhase() {
       try {
         const formData = new FormData();
-        formData.append("tanggal", this.formLaporanPhase.tanggal);
-        formData.append("laporan", this.formLaporanPhase.laporan);
-        formData.append("lampiran", this.formLaporanPhase.lampiran);
-        formData.append("id_phase", this.id);
-        formData.append("id_user", this.formLaporanPhase.id_user);
+        formData.append("phase", this.formUpdatePhase.phase);
+        formData.append("start_date", this.formUpdatePhase.start_date);
+        formData.append("end_date", this.formUpdatePhase.end_date);
+        formData.append("start_time", this.formUpdatePhase.start_time);
+        formData.append("end_time", this.formUpdatePhase.end_time);
+        formData.append("repeat", this.formUpdatePhase.repeat);
+        formData.append("notes", this.formUpdatePhase.notes);
         const response = await axios.post(
-          `http://127.0.0.1:8000/api/laporan-phase/create`,
+          `http://127.0.0.1:8000/api/phase/update-phase/${this.id}`,
           formData,
           {
             headers: {
@@ -137,10 +175,10 @@ export default {
         Swal.fire({
           icon: "success",
           title: "Request Success!",
-          text: "Laporan phase berhasil disimpan",
+          text: "Phase berhasil diupdate",
           confirmButtonText: "OK",
         }).then(() => {
-          this.$router.push("/user-projects");
+          this.$router.push("/admin-projects");
         });
       } catch (error) {
         console.error(error);
@@ -164,14 +202,14 @@ export default {
             },
           }
         );
-        this.dataPhase = response.data.data;
+        this.formUpdatePhase = response.data.data;
         this.ready = true;
       } catch (error) {
         console.error(error);
       }
     },
   },
-  created() {
+  created(){
     const currentTimeUTC = new Date().toUTCString();
     console.log("Waktu Sekarang (UTC):", currentTimeUTC);
     const token = sessionStorage.getItem("token"); // Ambil token dari local storage
@@ -197,8 +235,8 @@ export default {
           console.log("Aman");
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
-        this.formLaporanPhase.user_id = tokenPayload.id;
-        if (level !== "0") {
+        this.user_id = tokenPayload.id;
+        if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");
@@ -214,7 +252,7 @@ export default {
     } else {
       this.$router.push("/"); // Tindakan jika token tidak ada (pengguna belum terautentikasi)
     }
-  },
+  }
 };
 </script>
 

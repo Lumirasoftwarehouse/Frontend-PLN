@@ -146,6 +146,8 @@ export default {
           if (response.data.level == "0") {
             this.$router.push("/user-dashboard");
           } else if (response.data.level == "1") {
+            this.$router.push("/manager-dashboard");
+          }else if (response.data.level == "2") {
             this.$router.push("/admin-dashboard");
           } else {
             this.$router.push("/unauthorized");

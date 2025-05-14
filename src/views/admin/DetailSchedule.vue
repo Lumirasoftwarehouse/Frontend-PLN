@@ -236,7 +236,7 @@ export default {
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
-        if (level !== "1") {
+        if (level !== "2") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");

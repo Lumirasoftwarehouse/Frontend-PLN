@@ -145,22 +145,7 @@ export default {
     };
   },
   methods: {
-    async getAllDataProject() {
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/project/list-project`,
-          {
-            headers: {
-              Authorization: "Bearer " + sessionStorage.getItem("token"),
-            },
-          }
-        );
-        this.projects = response.data.data;
-        this.ready = true;
-      } catch (error) {
-        console.error(error);
-      }
-    },
+    
   },
   created() {
     const currentTimeUTC = new Date().toUTCString();
@@ -196,7 +181,6 @@ export default {
           sessionStorage.removeItem("token");
         }
         // success
-        this.getAllDataProject();
         // akhir
       } catch (error) {
         console.error("Error decoding token:", error);

@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../../components/Sidebar.vue";
+import Sidebar from "../../components/manager/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 import LineChart from "../../components/LineChart.vue";
@@ -31,7 +31,7 @@ const toggleSidebar = () => {
           <div
             class="d-sm-flex align-items-center justify-content-between mb-4"
           >
-            <h1 class="h3 mb-0 text-gray-800 text-center">Dashboard Admin</h1>
+            <h1 class="h3 mb-0 text-gray-800 text-center">Dashboard Manager</h1>
           </div>
 
           <!-- Full-width Blue Card -->
@@ -191,7 +191,7 @@ export default {
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
         this.name = tokenPayload.name;
-        if (level !== "2") {
+        if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");

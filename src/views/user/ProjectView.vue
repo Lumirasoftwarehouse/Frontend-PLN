@@ -21,7 +21,7 @@ const toggleSidebar = () => {
     <div id="content-wrapper" class="d-flex flex-column">
       <!-- Main Content -->
       <div id="content">
-        <Navbar @toggle-sidebar="toggleSidebar" />
+        <Navbar @toggle-sidebar="toggleSidebar"/>
 
         <!-- Begin Page Content -->
         <div class="container-fluid mt-4">
@@ -68,39 +68,54 @@ const toggleSidebar = () => {
             <div class="col-sm-4">
               <div class="row">
                 <div class="col-sm-4">
-                  <button class="btn bg-black me-2" @click="setView('list')">
-                    <i class="bi bi-list text-white"></i>
+                  <button
+                    class="btn me-2 float-end"
+                    style="border: 1px solid black"
+                    @click="setView('list')"
+                    :class="{
+                      'bg-black': view === 'list',
+                    }"
+                  >
+                    <i
+                      class="bi bi-list"
+                      :class="{
+                        'text-white': view === 'list',
+                      }"
+                    ></i>
                   </button>
+                </div>
+                <div class="col-sm-6">
                   <button
                     class="btn"
                     style="border: 1px solid black"
                     @click="setView('block')"
+                    :class="{
+                      'bg-black': view === 'block',
+                    }"
                   >
-                    <i class="bi bi-grid-fill text-black"></i>
+                    <i class="bi bi-grid-fill" :class="{
+                        'text-black': view === 'list',
+                      }"></i>
                   </button>
                 </div>
-                <div class="col-sm-6">
-                  <router-link
-                    class="btn btn-primary"
-                    to="/admin-create-project"
-                  >
-                    <i class="bi bi-plus"></i> New Project
-                  </router-link>
-                </div>
-                <div class="col-sm-2">
+                <!-- <div class="col-sm-2">
                   <i class="bi bi-three-dots-vertical text-black fs-3"></i>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
           <!-- Content Row -->
-          <CardProject :projects="projects" v-if="view == 'block'" />
-          <div class="card mt-4" v-if="view == 'list'">
-            <div class="card-body">
+          <CardProject
+            :projects="projects"
+            :statusProject="statusProject"
+            v-if="view == 'block'"
+          />
+          <div class="table-responsive">
               <div v-if="!ready" class="preloader"></div>
-              <table class="table" v-if="ready">
+              <DataTable class="display table table-striped" v-if="ready">
                 <thead>
                   <tr>
+                    <th scope="col">No</th>
                     <th scope="col">Action</th>
                     <th scope="col">Client</th>
                     <th scope="col">Project</th>
@@ -112,7 +127,8 @@ const toggleSidebar = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in projects" :key="item.id">
+                  <tr v-for="(item, index) in projects" :key="item.id">
+                    <td>{{index + 1}}</td>
                     <td
                       v-if="
                         statusProject == 'all' || item.status == statusProject
@@ -132,22 +148,6 @@ const toggleSidebar = () => {
                             @click="setDataDetail(item.id)"
                           >
                             <i class="bi bi-info-lg"></i>
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-warning"
-                            data-toggle="modal"
-                            data-target="#updateProject"
-                            @click="setDataUpdate(item)"
-                          >
-                            <i class="bi bi-pencil-square"></i>
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-danger"
-                            @click="konfirmasi(item.id, item.project)"
-                          >
-                            <i class="bi bi-trash3"></i>
                           </button>
                         </div>
                       </div>
@@ -206,7 +206,7 @@ const toggleSidebar = () => {
                       <router-link
                         class="btn btn-primary"
                         :to="{
-                          name: 'admin-schedule',
+                          name: 'user-schedule',
                           params: { id: item.id },
                         }"
                       >
@@ -229,9 +229,16 @@ const toggleSidebar = () => {
                     </td>
                   </tr>
                 </tbody>
-              </table>
-            </div>
+                
+              </DataTable>
           </div>
+          <!-- <div class="card mt-4" v-if="view == 'list'">
+            <div class="card-body">
+              <table class="table" >
+              </table>
+              
+            </div>
+          </div> -->
           <ChatMe />
         </div>
         <!-- /.container-fluid -->
@@ -245,107 +252,107 @@ const toggleSidebar = () => {
     <!-- End of Content Wrapper -->
   </div>
 
-  <!-- modal detail project -->
-  <div
-    class="modal fade"
-    id="modalDetailProject"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="modalDetailProjectLabel"
-    aria-hidden="true"
-    ref="modalDetailProjectRef"
-  >
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalDetailProjectLabel">
-            Project Details
-          </h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-8">
-              <div class="row mb-3">
-                <div class="col-6">
-                  <span>Client</span><br />
-                  <h5 class="fw-bold">{{ detailProject.client }}</h5>
-                  <span>Project</span><br />
-                  <h5 class="fw-bold">{{ detailProject.project }}</h5>
-                </div>
-                <div class="col-6 text-end">
-                  <button class="btn btn-success">Completed</button>
-                </div>
-              </div>
+<!-- Modal Detail Project -->
+<div
+  class="modal fade"
+  id="modalDetailProject"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="modalDetailProjectLabel"
+  aria-hidden="true"
+  ref="modalDetailProjectRef"
+>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDetailProjectLabel">
+          Project Details
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
 
-              <!-- Phases -->
-              <h6 class="mt-3">Phases</h6>
-              <div class="row mb-2">
-                <div
-                  class="col-6"
-                  v-for="(item, index) in detailPhase"
-                  :key="item.id"
-                >
-                  <span>Phase {{ index + 1 }}</span
-                  ><br />
-                  <span class="subPhase">{{ item.phase }}</span
-                  ><br />
-                  <span class="phaseTgl">{{ item.start_date }}</span>
-                </div>
-                <div class="col-6 text-end">
-                  <button class="btn btn-success">Completed</button>
-                </div>
+      <div class="modal-body">
+        <div class="row">
+          <!-- Left Column -->
+          <div class="col-8">
+            <!-- Info -->
+            <div class="row mb-3">
+              <div class="col-6">
+                <span>Client</span><br />
+                <h5 class="fw-bold">{{ detailProject.client }}</h5>
+                <span>Project</span><br />
+                <h5 class="fw-bold">{{ detailProject.project }}</h5>
               </div>
-
-              <!-- Deliverables -->
-              <h6 class="mt-3">Deliverables</h6>
-              <div
-                class="row mb-2"
-                v-for="(item, index) in detailDeliverable"
-                :key="item.id"
-              >
-                <div class="col-6">
-                  <span>Deliverable {{ index + 1 }}</span
-                  ><br />
-                  <h6>{{ item.deliverable }}</h6>
-                  <h6><i class="bi bi-link-45deg"></i> {{ item.file }}</h6>
-                  <h6>{{ item.notes }}</h6>
-                </div>
-                <div class="col-6 text-end">
-                  <button class="btn btn-success">Completed</button>
-                </div>
+              <div class="col-6 text-end">
+                <button class="btn btn-success">Completed</button>
               </div>
             </div>
 
-            <!-- Right column -->
-            <div class="col-4">
-              <span>Due Date</span><br />
-              <h5 class="fw-bold">{{ detailProject.dueDate }}</h5>
-              <br />
-              <span>People</span><br />
-              <div
-                class="d-flex align-items-center mb-3"
-                v-for="item in detailUserProject"
-                :key="item.id"
-              >
-                <img
-                  src="path/to/photo.jpg"
-                  class="rounded-circle me-2"
-                  alt="User Photo"
-                  width="50"
-                  height="50"
-                />
-                <div>
-                  <h6 class="mb-0">{{ item.name }}</h6>
-                  <small>{{ item.position }}</small>
-                </div>
+            <!-- Deliverables -->
+            <h6 class="mt-3">Deliverables</h6>
+            <div
+              class="row mb-2 border rounded p-2"
+              v-for="(item, index) in detailDeliverable"
+              :key="item.id"
+            >
+              <div class="col-8">
+                <span class="fw-bold">Deliverable {{ index + 1 }}</span><br />
+                <div>{{ item.deliverable }}</div>
+                <div><i class="bi bi-link-45deg"></i> {{ item.file }}</div>
+                <div><small>{{ item.notes }}</small></div>
+              </div>
+              <div class="col-4 text-end d-flex align-items-center justify-content-end">
+                <button class="btn btn-success btn-sm">Completed</button>
+              </div>
+            </div>
+
+            <!-- Phases Table -->
+            <h6 class="mt-4">Phases</h6>
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>No</th>
+                  <th>Phase</th>
+                  <th>Tanggal Mulai</th>
+                  <th class="text-end">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in detailPhase" :key="item.id">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ item.phase }}</td>
+                  <td>{{ formatDate(item.start_date) }}</td>
+                  <td class="text-end">
+                    <button class="btn btn-success btn-sm">Completed</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-4">
+            <span>Due Date</span><br />
+            <h5 class="fw-bold">{{ formatDate(detailProject.dueDate) }}</h5>
+            <br />
+            <span>People</span><br />
+            <div
+              class="d-flex align-items-center mb-3"
+              v-for="item in detailUserProject"
+              :key="item.id"
+            >
+              <img
+                src="path/to/photo.jpg"
+                class="rounded-circle me-2"
+                alt="User Photo"
+                width="50"
+                height="50"
+              />
+              <div>
+                <h6 class="mb-0">{{ item.name }}</h6>
+                <small>{{ item.position }}</small>
               </div>
             </div>
           </div>
@@ -353,7 +360,8 @@ const toggleSidebar = () => {
       </div>
     </div>
   </div>
-  <!-- end modal detail project -->
+</div>
+
 
   <!-- modal update project -->
   <div
@@ -491,6 +499,13 @@ export default {
     };
   },
   methods: {
+    formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  },
     setDataUpdate(project) {
       this.dataProject.id = project.id;
       this.dataProject.client = project.client;
@@ -732,7 +747,7 @@ export default {
   padding: 0;
 }
 
-table {
+/* table {
   border: none;
 }
 
@@ -748,5 +763,5 @@ table {
 
 .table tbody tr {
   border: none;
-}
+} */
 </style>

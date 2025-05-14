@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../../components/Sidebar.vue";
+import Sidebar from "../../components/manager/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 import CardProject from "../../components/admin/CardProject.vue";
@@ -21,14 +21,14 @@ const toggleSidebar = () => {
     <div id="content-wrapper" class="d-flex flex-column">
       <!-- Main Content -->
       <div id="content">
-        <Navbar @toggle-sidebar="toggleSidebar"/>
+        <Navbar @toggle-sidebar="toggleSidebar" />
 
         <!-- Begin Page Content -->
         <div class="container-fluid mt-4">
           <!-- Page Heading -->
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-sm-4">
-              <!-- <div class="row">
+              <div class="row">
                 <div class="col-sm-4">
                   <h6
                     :class="{
@@ -62,13 +62,12 @@ const toggleSidebar = () => {
                     Completed
                   </h6>
                 </div>
-              </div> -->
+              </div>
             </div>
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
               <div class="row">
-                <div class="col-sm-6"></div>
-                <!-- <div class="col-sm-4">
+                <div class="col-sm-4">
                   <button
                     class="btn me-2"
                     style="border: 1px solid black"
@@ -92,25 +91,28 @@ const toggleSidebar = () => {
                       'bg-black': view === 'block',
                     }"
                   >
-                    <i class="bi bi-grid-fill" :class="{
+                    <i
+                      class="bi bi-grid-fill"
+                      :class="{
                         'text-black': view === 'list',
-                      }"></i>
+                      }"
+                    ></i>
                   </button>
-                </div> -->
+                </div>
                 <div class="col-sm-6">
                   <router-link
                     class="btn btn-primary"
-                    to="/admin-create-project"
+                    to="/manager-create-project"
                   >
                     <i class="bi bi-plus"></i> New Project
                   </router-link>
                 </div>
-                <!-- <div class="col-sm-2">
+                <div class="col-sm-2">
                   <i class="bi bi-three-dots-vertical text-black fs-3"></i>
-                </div> -->
+                </div>
               </div>
             </div>
-          </div>
+          </div> -->
           <!-- Content Row -->
           <CardProject
             :projects="projects"
@@ -118,142 +120,140 @@ const toggleSidebar = () => {
             v-if="view == 'block'"
           />
           <div class="table-responsive">
-              <div v-if="!ready" class="preloader"></div>
-              <DataTable class="display table table-striped" v-if="ready">
-                <thead>
-                  <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">Action</th>
-                    <th scope="col">Client</th>
-                    <th scope="col">Project</th>
-                    <th scope="col">Last Edited</th>
-                    <th scope="col">Due Date</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Schedule</th>
-                    <th scope="col">Expert</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, index) in projects" :key="item.id">
-                    <td>{{index + 1}}</td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
-                    >
-                      <div class="row">
-                        <div
-                          class="btn-group"
-                          role="group"
-                          aria-label="Basic mixed styles example"
+            <div v-if="!ready" class="preloader"></div>
+            <DataTable class="display table table-striped" v-if="ready">
+              <thead>
+                <tr>
+                  <th scope="col">No</th>
+                  <th scope="col">Action</th>
+                  <th scope="col">Client</th>
+                  <th scope="col">Project</th>
+                  <th scope="col">Last Edited</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Schedule</th>
+                  <th scope="col">Expert</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in projects" :key="item.id">
+                  <td>{{ index + 1 }}</td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    <div class="row">
+                      <div
+                        class="btn-group"
+                        role="group"
+                        aria-label="Basic mixed styles example"
+                      >
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          data-toggle="modal"
+                          data-target="#modalDetailProject"
+                          @click="setDataDetail(item.id)"
                         >
-                          <button
-                            type="button"
-                            class="btn btn-primary"
-                            data-toggle="modal"
-                            data-target="#modalDetailProject"
-                            @click="setDataDetail(item.id)"
-                          >
-                            <i class="bi bi-info-lg"></i>
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-warning"
-                            data-toggle="modal"
-                            data-target="#updateProject"
-                            @click="setDataUpdate(item)"
-                          >
-                            <i class="bi bi-pencil-square"></i>
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-danger"
-                            @click="konfirmasi(item.id, item.project)"
-                          >
-                            <i class="bi bi-trash3"></i>
-                          </button>
-                        </div>
+                          <i class="bi bi-info-lg"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-success"
+                          :style="{
+                            cursor:
+                              item.status == '0' ? 'pointer' : 'not-allowed',
+                          }"
+                          @click="
+                            konfirmasi(item.status, item.id, item.project)
+                          "
+                        >
+                          <i class="bi bi-check2-all"></i>
+                        </button>
                       </div>
-                    </td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
+                    </div>
+                  </td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    {{ item.client }}
+                  </td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    {{ item.project }}
+                  </td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    {{ item.updated_at }}
+                  </td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    {{ item.dueDate }}
+                  </td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    <button
+                      class="btn btn-warning text-black"
+                      v-if="item.status == '0'"
+                      style="cursor: none"
                     >
-                      {{ item.client }}
-                    </td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
+                      In Progress
+                    </button>
+                    <button
+                      class="btn btn-success text-black"
+                      v-if="item.status == '1'"
+                      style="cursor: none"
                     >
-                      {{ item.project }}
-                    </td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
+                      Completed
+                    </button>
+                  </td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    <router-link
+                      class="btn btn-primary"
+                      :to="{
+                        name: 'manager-schedule',
+                        params: { id: item.id },
+                      }"
                     >
-                      {{ item.updated_at }}
-                    </td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
-                    >
-                      {{ item.dueDate }}
-                    </td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
-                    >
-                      <button
-                        class="btn btn-warning text-black"
-                        v-if="item.status == '0'"
-                      >
-                        In Progress
-                      </button>
-                      <button
-                        class="btn btn-success text-black"
-                        v-if="item.status == '1'"
-                      >
-                        Completed
-                      </button>
-                    </td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
-                    >
-                      <router-link
-                        class="btn btn-primary"
-                        :to="{
-                          name: 'admin-schedule',
-                          params: { id: item.id },
-                        }"
-                      >
-                        View
-                      </router-link>
-                    </td>
-                    <td
-                      v-if="
-                        statusProject == 'all' || item.status == statusProject
-                      "
-                    >
-                      <div class="user-info">
-                        <img
-                          :src="`http://localhost:8000/storage/profiles/${item.users[0].image}`"
-                          alt="Profile Picture"
-                          class="profile-image"
-                        />
-                        {{ item.users[0].name }}
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-                
-              </DataTable>
+                      View
+                    </router-link>
+                  </td>
+                  <td
+                    v-if="
+                      statusProject == 'all' || item.status == statusProject
+                    "
+                  >
+                    <div class="user-info">
+                      <img
+                        :src="`http://localhost:8000/storage/profiles/${item.users[0].image}`"
+                        alt="Profile Picture"
+                        class="profile-image"
+                      />
+                      {{ item.users[0].name }}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </DataTable>
           </div>
           <!-- <div class="card mt-4" v-if="view == 'list'">
             <div class="card-body">
@@ -384,111 +384,6 @@ const toggleSidebar = () => {
     </div>
   </div>
   <!-- end modal detail project -->
-
-  <!-- modal update project -->
-  <div
-    class="modal fade"
-    id="updateProject"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="updateProjectLabel"
-    aria-hidden="true"
-    ref="updateProjectRef"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addInvoiceModalLabel">Update Project</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Form Atur Tanggal -->
-          <form>
-            <div class="form-group">
-              <label for="client">Client</label>
-              <input
-                type="text"
-                class="form-control"
-                id="client"
-                v-model="dataProject.client"
-              />
-            </div>
-            <div class="form-group">
-              <label for="projectName">Project Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="projectName"
-                v-model="dataProject.projectName"
-              />
-            </div>
-            <div class="form-group">
-              <label for="dueDate">Due Date</label>
-              <input
-                type="date"
-                class="form-control"
-                id="dueDate"
-                v-model="dataProject.dueDate"
-              />
-            </div>
-            <div class="form-group">
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="flexRadioDefault1"
-                  v-model="dataProject.status"
-                  value="1"
-                />
-                <label class="form-check-label" for="flexRadioDefault1">
-                  Completed
-                </label>
-              </div>
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="flexRadioDefault2"
-                  checked
-                  v-model="dataProject.status"
-                  value="0"
-                />
-                <label class="form-check-label" for="flexRadioDefault2">
-                  In Progress
-                </label>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="updateProject()"
-              >
-                Simpan
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- end modal update project -->
 </template>
 <script>
 import axios from "axios";
@@ -530,15 +425,13 @@ export default {
     setDataDetail(id) {
       this.getDetailDataProject(id);
     },
-    async updateProject() {
+    async actionStatus(status, id) {
       try {
         const formData = new FormData();
-        formData.append("client", this.dataProject.client);
-        formData.append("project", this.dataProject.projectName);
-        formData.append("dueDate", this.dataProject.dueDate);
-        formData.append("status", this.dataProject.status);
+        formData.append("id", id);
+        formData.append("status", status === "1" ? "0" : "1");
         const response = await axios.post(
-          `http://127.0.0.1:8000/api/project/update-project/${this.dataProject.id}`,
+          `http://127.0.0.1:8000/api/project/action-project`,
           formData,
           {
             headers: {
@@ -552,51 +445,28 @@ export default {
           title: "Request Success!",
           text: "Project berhasil diupdate",
           confirmButtonText: "OK",
-        }).then(() => {
-          $("#updateProject").modal("hide");
-          this.$router.push("/admin-projects");
-        });
+        }).then(() => {});
       } catch (error) {
         console.error(error);
       }
     },
-    konfirmasi(idProject, project) {
+    konfirmasi(status, idProject, project) {
       Swal.fire({
-        title: `Apakah Anda yakin ingin menghapus project ${project}?`,
-        text: "Project akan dihapus jika anda menekan tombol Hapus.",
+        title: `Apakah Anda yakin project ${project} ${
+          status === "1" ? "selesai" : "belum selesai"
+        }?`,
+        text: "Status project akan diupdate jika anda menekan tombol update.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#061387",
-        confirmButtonText: "Hapus",
+        confirmButtonText: "update",
         cancelButtonText: "Batal",
       }).then((result) => {
         if (result.isConfirmed) {
-          this.deleteProject(idProject);
+          this.actionStatus(status, idProject);
         }
       });
-    },
-    async deleteProject(id) {
-      try {
-        const response = await axios.delete(
-          `http://127.0.0.1:8000/api/project/delete-project/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-            },
-          }
-        );
-        console.log(response.data); // Handle response from server
-        this.getAllDataProject(); // Reload the misi data after adding a new one
-        this.showAlert("Success", "Benefit berhasil didelete", "success");
-      } catch (error) {
-        console.error(error); // Handle error if any
-        this.showAlert(
-          "Oops...",
-          "Terjadi kesalahan saat mendelete benefit",
-          "error"
-        );
-      }
     },
     showAlert(title, text, icon) {
       this.$swal({
@@ -646,30 +516,6 @@ export default {
         console.error(error);
       }
     },
-    async createProject() {
-      try {
-        const formData = new FormData();
-        formData.append("client", this.dataProject.client);
-        formData.append("project", this.dataProject.projectName);
-        formData.append("dueDate", this.dataProject.dueDate);
-        formData.append("schedule", this.dataProject.schedule);
-        const response = await axios.post(
-          `http://127.0.0.1:8000/api/project/create-project`,
-          formData,
-          {
-            headers: {
-              Authorization: "Bearer " + sessionStorage.getItem("token"),
-            },
-          }
-        );
-        this.ready = false;
-        // this.showAlert();
-        this.getAllDataProject();
-        console.log("ini invoice", this.invoices);
-      } catch (error) {
-        console.error(error);
-      }
-    },
     setActive(status) {
       this.activeStatus = status;
     },
@@ -701,7 +547,7 @@ export default {
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
-        if (level !== "2") {
+        if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");

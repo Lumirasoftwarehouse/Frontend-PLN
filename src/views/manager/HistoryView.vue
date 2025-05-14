@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../../components/Sidebar.vue";
+import Sidebar from "../../components/manager/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 import { ref } from "vue";
@@ -143,7 +143,7 @@ export default {
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
-        if (level !== "2") {
+        if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");

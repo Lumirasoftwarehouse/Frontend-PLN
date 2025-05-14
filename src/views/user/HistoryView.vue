@@ -41,9 +41,9 @@ const toggleSidebar = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in projects" :key="item.id">
-                  <td>{{ item.client }}</td>
-                  <td>{{ item.created_at }}</td>
+                <tr v-for="item in dataAktivitas" :key="item.id">
+                  <td>{{ item.name }}</td>
+                  <td>{{ formatDateTime(item.created_at) }}</td>
                 </tr>
               </tbody>
             </DataTable>
@@ -73,54 +73,44 @@ DataTable.use(DataTablesCore);
 export default {
   data() {
     return {
-      projects: [],
-      dataProject:{
-        client:'',
-        projectName:'',
-        dueDate:'',
-        schedule:''
+      dataAktivitas: [],
+      dataProject: {
+        client: "",
+        projectName: "",
+        dueDate: "",
+        schedule: "",
       },
       role: null,
       ready: false,
     };
   },
   methods: {
-    async getAllDataProject() {
+    formatDateTime(dateString) {
+      const date = new Date(dateString);
+
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+      const year = date.getUTCFullYear();
+
+      const hours = String(date.getUTCHours()).padStart(2, "0");
+      const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+      const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+
+      return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    },
+
+    async getAllDataAktivitas() {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/project/list-project`,
+          `http://127.0.0.1:8000/api/auth/list-aktivitas`,
           {
             headers: {
               Authorization: "Bearer " + sessionStorage.getItem("token"),
             },
           }
         );
-        this.projects = response.data.data;
+        this.dataAktivitas = response.data.data;
         this.ready = true;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async createProject() {
-      try {
-        const formData = new FormData();
-        formData.append("client", this.dataProject.client);
-        formData.append("project", this.dataProject.projectName);
-        formData.append("dueDate", this.dataProject.dueDate);
-        formData.append("schedule", this.dataProject.schedule);
-        const response = await axios.post(
-          `http://127.0.0.1:8000/api/project/create-project`,
-          formData,
-          {
-            headers: {
-              Authorization: "Bearer " + sessionStorage.getItem("token"),
-            },
-          }
-        );
-        this.ready = false;
-        // this.showAlert();
-        this.getAllDataProject();
-        console.log("ini invoice", this.invoices);
       } catch (error) {
         console.error(error);
       }
@@ -160,7 +150,7 @@ export default {
           sessionStorage.removeItem("token");
         }
         // success
-        this.getAllDataProject();
+        this.getAllDataAktivitas();
         // akhir
       } catch (error) {
         console.error("Error decoding token:", error);

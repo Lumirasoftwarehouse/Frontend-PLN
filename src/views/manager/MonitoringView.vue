@@ -1,5 +1,6 @@
 <script setup>
-import Sidebar from "../../components/Sidebar.vue";
+import Sidebar from "../../components/manager/Sidebar.vue";
+import ModalMonitoring from "../../components/manager/ModalMonitoring.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 import { ref } from "vue";
@@ -28,7 +29,7 @@ const toggleSidebar = () => {
           <div
             class="d-sm-flex align-items-center justify-content-between mb-4"
           >
-            <h1 class="h3 mb-0 text-gray-800 text-center">History</h1>
+            <h1 class="h3 mb-0 text-gray-800 text-center">Monitoring</h1>
           </div>
           <!-- Content Row -->
           <div class="table-responsive">
@@ -36,21 +37,44 @@ const toggleSidebar = () => {
             <DataTable class="display table table-striped" v-if="ready">
               <thead>
                 <tr>
-                  <th scope="col">User</th>
-                  <th scope="col">Last Login</th>
+                  <th scope="col">No</th>
+                  <th scope="col">Client</th>
+                  <th scope="col">Project</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in dataAktivitas" :key="item.id">
-                  <td>{{ item.name }}</td>
-                  <td>{{ formatDateTime(item.created_at) }}</td>
+                <tr v-for="(item, index) in projects" :key="item.id">
+                  <th scope="row">{{ index + 1 }}</th>
+                  <td>{{ item.client }}</td>
+                  <td>{{ item.project }}</td>
+                  <td>{{ item.dueDate }}</td>
+                  <td>
+                    <button
+                      class="btn btn-warning text-black"
+                      v-if="item.status == '0'"
+                      data-toggle="modal"
+                      data-target="#modalDetailMonitoring"
+                      @click="setDataDetail(item.id)"
+                    >
+                      In Progress
+                    </button>
+                    <button
+                      class="btn btn-success text-black"
+                      v-if="item.status == '1'"
+                      data-toggle="modal"
+                      data-target="#modalDetailMonitoring"
+                      @click="setDataDetail(item.id)"
+                    >
+                      Completed
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </DataTable>
           </div>
-          <!-- Content Row -->
-
-          <!-- <ChatMe /> -->
+          <ChatMe />
         </div>
         <!-- /.container-fluid -->
       </div>
@@ -62,6 +86,8 @@ const toggleSidebar = () => {
     </div>
     <!-- End of Content Wrapper -->
   </div>
+
+  <ModalMonitoring :dataDetailMonitoring="dataDetail" />
 </template>
 <script>
 import axios from "axios";
@@ -73,44 +99,70 @@ DataTable.use(DataTablesCore);
 export default {
   data() {
     return {
-      dataAktivitas: [],
+      projects: [],
       dataProject: {
         client: "",
         projectName: "",
         dueDate: "",
         schedule: "",
       },
+      dataDetail: [],
       role: null,
       ready: false,
     };
   },
   methods: {
-    formatDateTime(dateString) {
-      const date = new Date(dateString);
-
-      const day = String(date.getUTCDate()).padStart(2, "0");
-      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-      const year = date.getUTCFullYear();
-
-      const hours = String(date.getUTCHours()).padStart(2, "0");
-      const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-      const seconds = String(date.getUTCSeconds()).padStart(2, "0");
-
-      return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-    },
-
-    async getAllDataAktivitas() {
+    async setDataDetail(id) {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/auth/list-aktivitas`,
+          `http://127.0.0.1:8000/api/laporan-phase/project/${id}`,
           {
             headers: {
               Authorization: "Bearer " + sessionStorage.getItem("token"),
             },
           }
         );
-        this.dataAktivitas = response.data.data;
+        this.dataDetail = response.data.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getAllDataProject() {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/project/list-project`,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        this.projects = response.data.data;
         this.ready = true;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async createProject() {
+      try {
+        const formData = new FormData();
+        formData.append("client", this.dataProject.client);
+        formData.append("project", this.dataProject.projectName);
+        formData.append("dueDate", this.dataProject.dueDate);
+        formData.append("schedule", this.dataProject.schedule);
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/project/create-project`,
+          formData,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        this.ready = false;
+        // this.showAlert();
+        this.getAllDataProject();
+        console.log("ini invoice", this.invoices);
       } catch (error) {
         console.error(error);
       }
@@ -143,14 +195,14 @@ export default {
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
-        if (level !== "2") {
+        if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");
           sessionStorage.removeItem("token");
         }
         // success
-        this.getAllDataAktivitas();
+        this.getAllDataProject();
         // akhir
       } catch (error) {
         console.error("Error decoding token:", error);
@@ -162,6 +214,8 @@ export default {
   },
 };
 </script>
+
+
 
 
 <style>

@@ -1,6 +1,7 @@
 <script setup>
 import Sidebar from "../../components/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
+import ModalMonitoring from "../../components/admin/ModalMonitoring.vue";
 import Footer from "../../components/Footer.vue";
 import { ref } from "vue";
 
@@ -53,12 +54,18 @@ const toggleSidebar = () => {
                       <button
                         class="btn btn-warning text-black"
                         v-if="item.status == '0'"
+                        data-toggle="modal"
+                          data-target="#modalDetailMonitoring"
+                          @click="setDataDetail(item.id)"
                       >
                         In Progress
                       </button>
                       <button
                         class="btn btn-success text-black"
                         v-if="item.status == '1'"
+                         data-toggle="modal"
+                          data-target="#modalDetailMonitoring"
+                          @click="setDataDetail(item.id)"
                       >
                         Completed
                       </button>
@@ -79,6 +86,8 @@ const toggleSidebar = () => {
     </div>
     <!-- End of Content Wrapper -->
   </div>
+
+  <ModalMonitoring :dataDetailMonitoring="dataDetail"/>
 </template>
 <script>
 import axios from "axios";
@@ -97,11 +106,27 @@ export default {
         dueDate:'',
         schedule:''
       },
+      dataDetail:[],
       role: null,
       ready: false,
     };
   },
   methods: {
+    async setDataDetail(id) {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/laporan-phase/project/${id}`,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        this.dataDetail = response.data.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async getAllDataProject() {
       try {
         const response = await axios.get(
@@ -170,7 +195,7 @@ export default {
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
-        if (level !== "1") {
+        if (level !== "2") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");

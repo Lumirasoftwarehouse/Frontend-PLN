@@ -113,7 +113,7 @@
           class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
           aria-labelledby="userDropdown"
         >
-          <router-link
+          <!-- <router-link
             class="dropdown-item"
             to="/profile"
             data-toggle="modal"
@@ -121,7 +121,7 @@
           >
             <i class="bi bi-person"></i>
             Profile
-          </router-link>
+          </router-link> -->
           <a
             class="dropdown-item"
             href="#"

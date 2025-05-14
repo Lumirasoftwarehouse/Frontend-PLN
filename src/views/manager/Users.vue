@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../../components/Sidebar.vue";
+import Sidebar from "../../components/manager/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 import { ref } from "vue";
@@ -28,7 +28,7 @@ const toggleSidebar = () => {
           <div
             class="d-sm-flex align-items-center justify-content-between mb-4"
           >
-            <h1 class="h3 mb-0 text-gray-800 text-center">History</h1>
+            <h1 class="h3 mb-0 text-gray-800 text-center">List Staff</h1>
           </div>
           <!-- Content Row -->
           <div class="table-responsive">
@@ -36,14 +36,35 @@ const toggleSidebar = () => {
             <DataTable class="display table table-striped" v-if="ready">
               <thead>
                 <tr>
-                  <th scope="col">User</th>
-                  <th scope="col">Last Login</th>
+                  <th scope="col">No</th>
+                  <th scope="col">Nama</th>
+                  <th scope="col">Jabatan</th>
+                  <th scope="col">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in dataAktivitas" :key="item.id">
-                  <td>{{ item.name }}</td>
-                  <td>{{ formatDateTime(item.created_at) }}</td>
+                <tr v-for="(item, index) in dataUsers" :key="item.id">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ item.nama_user }}</td>
+                  <td>Staf
+                    {{
+                      item.nama_divisi
+                    }}
+                  </td>
+                  <td>
+                    <div
+                      class="btn-group"
+                      role="group"
+                      aria-label="Basic example"
+                    >
+                      <button type="button" class="btn btn-warning">
+                        Update
+                      </button>
+                      <button type="button" class="btn btn-danger">
+                        Delete
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </DataTable>
@@ -73,7 +94,7 @@ DataTable.use(DataTablesCore);
 export default {
   data() {
     return {
-      dataAktivitas: [],
+      dataUsers: [],
       dataProject: {
         client: "",
         projectName: "",
@@ -85,32 +106,42 @@ export default {
     };
   },
   methods: {
-    formatDateTime(dateString) {
-      const date = new Date(dateString);
-
-      const day = String(date.getUTCDate()).padStart(2, "0");
-      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-      const year = date.getUTCFullYear();
-
-      const hours = String(date.getUTCHours()).padStart(2, "0");
-      const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-      const seconds = String(date.getUTCSeconds()).padStart(2, "0");
-
-      return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-    },
-
-    async getAllDataAktivitas() {
+    async listUsers() {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/auth/list-aktivitas`,
+          `http://127.0.0.1:8000/api/divisi/users`,
           {
             headers: {
               Authorization: "Bearer " + sessionStorage.getItem("token"),
             },
           }
         );
-        this.dataAktivitas = response.data.data;
+        this.dataUsers = response.data.data;
         this.ready = true;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async createProject() {
+      try {
+        const formData = new FormData();
+        formData.append("client", this.dataProject.client);
+        formData.append("project", this.dataProject.projectName);
+        formData.append("dueDate", this.dataProject.dueDate);
+        formData.append("schedule", this.dataProject.schedule);
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/project/create-project`,
+          formData,
+          {
+            headers: {
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
+            },
+          }
+        );
+        this.ready = false;
+        // this.showAlert();
+        this.listUsers();
+        console.log("ini invoice", this.invoices);
       } catch (error) {
         console.error(error);
       }
@@ -143,14 +174,14 @@ export default {
         }
         const level = tokenPayload.level; // Ambil level pengguna dari payload
         this.user_id = tokenPayload.id;
-        if (level !== "2") {
+        if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");
           sessionStorage.removeItem("token");
         }
         // success
-        this.getAllDataAktivitas();
+        this.listUsers();
         // akhir
       } catch (error) {
         console.error("Error decoding token:", error);

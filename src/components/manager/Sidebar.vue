@@ -22,7 +22,7 @@
     <li class="nav-item mt-5">
       <router-link
         class="nav-link"
-        to="/admin-dashboard"
+        to="/manager-dashboard"
         active-class="active-link"
       >
         <i class="bi bi-grid"></i>
@@ -32,7 +32,7 @@
     <li class="nav-item">
       <router-link
         class="nav-link"
-        to="/admin-projects"
+        to="/manager-projects"
         active-class="active-link"
       >
         <i class="bi bi-file-earmark-fill"></i>
@@ -42,7 +42,7 @@
     <li class="nav-item">
       <router-link
         class="nav-link"
-        to="/admin-monitoring"
+        to="/manager-monitoring"
         active-class="active-link"
       >
         <i class="bi bi-graph-up-arrow"></i>
@@ -52,7 +52,7 @@
     <li class="nav-item">
       <router-link
         class="nav-link"
-        to="/admin-history"
+        to="/manager-history"
         active-class="active-link"
       >
         <i class="bi bi-clock-history"></i>
@@ -62,11 +62,11 @@
     <li class="nav-item">
       <router-link
         class="nav-link"
-        to="/admin-divisi"
+        to="/manager-user"
         active-class="active-link"
       >
-        <i class="bi bi-people"></i>
-        <span>Divisi</span>
+        <i class="bi bi-person"></i>
+        <span>Staff</span>
       </router-link>
     </li>
   </ul>

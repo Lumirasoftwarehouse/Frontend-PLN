@@ -42,16 +42,6 @@
     <li class="nav-item">
       <router-link
         class="nav-link"
-        to="/user-monitoring"
-        active-class="active-link"
-      >
-        <i class="bi bi-graph-up-arrow"></i>
-        <span>Monitoring</span>
-      </router-link>
-    </li>
-    <li class="nav-item">
-      <router-link
-        class="nav-link"
         to="/user-history"
         active-class="active-link"
       >

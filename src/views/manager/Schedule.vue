@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../../components/Sidebar-User.vue";
+import Sidebar from "../../components/manager/Sidebar.vue";
 import Navbar from "../../components/Navbar-Admin.vue";
 import Footer from "../../components/Footer.vue";
 import CardProject from "../../components/admin/CardProject.vue";
@@ -376,7 +376,7 @@ export default {
           console.log("Aman");
         }
         const level = tokenPayload.level;
-        if (level !== "0") {
+        if (level !== "1") {
           this.$router.push("/unauthorized");
         } else if (!header || !signature) {
           this.$router.push("/");
